@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript 
 ## Parameters
-db = "medium"
 from_kbytes = 1
 to_kbytes = 5
 scriptname = paste("ElapsedTimeAll_",from_kbytes,"k", sep="")

@@ -1,5 +1,4 @@
 #!/usr/bin/Rscript
-db = "medium"
 scriptname = "ObjectSizeDensity"
 source("include.r")
 

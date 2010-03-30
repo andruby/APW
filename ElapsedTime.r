@@ -1,6 +1,5 @@
 #!/usr/bin/Rscript 
 ## Parameters
-db = "small"
 from_kbytes = 1
 to_kbytes = 5
 output_file = paste("ElapsedTime_",db,"_",from_kbytes,"k.eps", sep="")

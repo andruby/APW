@@ -1,5 +1,4 @@
 #!/usr/bin/Rscript
-db = "medium"
 scriptname = "ObjectSizeCumulative"
 source("include.r")
 

@@ -1,0 +1,3 @@
+db = "small"
+# can be "localhost","gstf-fpi.itaca.upv.es" or "ec2.bedesign.be"
+hostname = "localhost"

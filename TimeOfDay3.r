@@ -1,5 +1,4 @@
 #!/usr/bin/Rscript 
-db = "medium"
 scriptname = "TimeOfDay3"
 
 ## Include standard stuff

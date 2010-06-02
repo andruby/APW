@@ -13,7 +13,7 @@ data = dbGetQuery(con, paste("select avg(size) AS 'size' from ",db," where size 
 
 ## Logaritmic Density Plot
 cat("Plotting Chart \n")
-plot(density(log10(data_all$size)),main="",col="red",xlim=c(2,8),ylim=c(0,2),xlab="Tamaño de Objeto",ylab="Densidad (%)",axes=FALSE)
+plot(density(log10(data_all$size)),main="",col="red",xlim=c(2,8),xlab="Tamaño de Objeto",ylab="Densidad (%)",axes=FALSE)
 axis(1,at=c(2,3,4,5,6,7,8),labels=c("100B","1KB","10KB","100KB","1MB","10MB","100MB"))
 axis(2)
 lines(density(log10(data$size)),col="blue", lty=2)

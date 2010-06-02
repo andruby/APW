@@ -5,7 +5,6 @@ source("include.r")
 par(mar=c(4,4,1,2), cex=2)
 
 ## Get The Data
-#d1_fn <- paste("data_",scriptname,".gz",sep="")
 if(!read_cache()) {
 	between_time = "time between '2009-02-22 00:00:00' and '2009-02-28 23:59:59'"
 	cat("Getting Data (Requests) \n")

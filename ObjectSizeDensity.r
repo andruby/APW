@@ -5,10 +5,11 @@ source("include.r")
 par(mar=c(4,4,1,1), cex=2)
 
 ## Get The Data
+between_time = "time between '2009-02-22 00:00:00' and '2009-02-28 23:59:59'"
 cat("Getting Data (Requests) \n")
-data_all = dbGetQuery(con, paste("select size from ",db," where size > 1 and time between 2009-02-22 and 2009-03-01"))
+data_all = dbGetQuery(con, paste("select size AS 'size' from ",db," where size > 1 and ",between_time))
 cat("Getting Data (Uniques) \n")
-data = dbGetQuery(con, paste("select avg(size) from ",db," where size > 1 and time between 2009-02-22 and 2009-03-01 group by MD5(uri)"))
+data = dbGetQuery(con, paste("select avg(size) AS 'size' from ",db," where size > 1 and ",between_time," group by MD5(uri)"))
 
 ## Logaritmic Density Plot
 cat("Plotting Chart \n")

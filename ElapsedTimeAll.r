@@ -15,7 +15,7 @@ actions <- c("TCP_MEM_HIT", "TCP_IMS_HIT", "TCP_HIT", "TCP_CLIENT_REFRESH_MISS",
 cat("Getting Data \n")
 all = dbGetQuery(con, paste("select action,elapsed from ",db," where size > ",from_kbytes*1024," and size < ",to_kbytes*1024))
 cat("Plotting Chart \n")
-plot(0,0,main=paste("Tiempo transcurrido (Objetos ",from_kbytes,"-",to_kbytes,"KB)",sep=""),xlab="Tiempo transcurrido (ms)",ylab="Acumulativo (%)",xlim=c(0,600), ylim=c(0,1), type="n", axes=F)
+plot(0,0,xlab="Tiempo transcurrido (ms)",ylab="Acumulativo (%)",xlim=c(0,600), ylim=c(0,1), type="n", axes=F)
 
 axis(1)
 axis(2, at=c(0,0.25,0.5,0.75,1), labels=c(0,25,50,75,100))

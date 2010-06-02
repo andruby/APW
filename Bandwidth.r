@@ -17,7 +17,7 @@ cat("Getting Data (Total BW) \n")
 bw_total = dbGetQuery(con, paste("SELECT ",mysql_year_seconds," AS 'slot',sum(size) AS 'size' from ",db," group by ",mysql_year_seconds))
 
 cat("Calculating X en Y's \n")
-min_bw_x = min(bw_x)
+min_bw_x = min(bw_total)
 bw_x = ((bw_total$slot-min_bw_x) / (24*3))
 # turn bytes per 20 minutes into Megabits per seconds
 bw_total = (bw_total$size * 8) / (1200 * 1024 * 1024)

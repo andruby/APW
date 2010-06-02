@@ -8,15 +8,19 @@ source("include.r")
 par(mar=c(4, 4, 1, 5.7),cex=1.8)
 
 ## Get The Data
-cat("Getting Data (TimeOfDay) \n")
-tod = dbGetQuery(con, paste("SELECT TIME_TO_SEC(time) div 1200 AS 'minutes',count(*) AS 'count',sum(size) AS 'size' from ",db," where method = 'GET' group by TIME_TO_SEC(time) div 1200 "))
-cat("Getting Data (HitRate) \n")
-tod_hits = dbGetQuery(con, paste("SELECT TIME_TO_SEC(time) div 1200 AS 'minutes',count(*) AS 'count' from ",db," where method = 'GET' and action like '%HIT' group by TIME_TO_SEC(time) div 1200 "))
-cat("Calculating X en Y's \n")
-tod_x = tod$minutes/3
-tod_hitrate = tod_hits$count/tod$count
-tod_counts = (tod$count/sum(tod$count))*300
-# tod_bytes = (tod$size/sum(tod$size))*300
+if(!read_cache()) {
+	cat("Getting Data (TimeOfDay) \n")
+	tod = dbGetQuery(con, paste("SELECT TIME_TO_SEC(time) div 1200 AS 'minutes',count(*) AS 'count',sum(size) AS 'size' from ",db," where method = 'GET' group by TIME_TO_SEC(time) div 1200 "))
+	cat("Getting Data (HitRate) \n")
+	tod_hits = dbGetQuery(con, paste("SELECT TIME_TO_SEC(time) div 1200 AS 'minutes',count(*) AS 'count' from ",db," where method = 'GET' and action like '%HIT' group by TIME_TO_SEC(time) div 1200 "))
+	cat("Calculating X en Y's \n")
+	tod_x = tod$minutes/3
+	tod_hitrate = tod_hits$count/tod$count
+	tod_counts = (tod$count/sum(tod$count))*300
+	# tod_bytes = (tod$size/sum(tod$size))*300
+	write_cache(c("tod_x","tod_hitrate","tod_counts"))
+}
+
 max_y = max(tod_counts)
 cat("Plotting Chart \n")
 plot(tod_x,tod_counts,xlab="Hora del Día",ylab="Pedidos (%)", axes=F, col="blue", type="l", ylim=c(0,max_y))

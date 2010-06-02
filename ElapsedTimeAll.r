@@ -11,9 +11,13 @@ par(mar=c(4,4,3,3),cex=1.5)
 colors <- rainbow(6)
 actions <- c("TCP_MEM_HIT", "TCP_IMS_HIT", "TCP_HIT", "TCP_CLIENT_REFRESH_MISS", "TCP_REFRESH_HIT", "TCP_MISS")
 
-## Build this chart
-cat("Getting Data \n")
-all = dbGetQuery(con, paste("select action,elapsed from ",db," where size > ",from_kbytes*1024," and size < ",to_kbytes*1024))
+## Get the data
+if(!read_cache()) {
+	cat("Getting Data \n")
+	all = dbGetQuery(con, paste("select action,elapsed from ",db," where size > ",from_kbytes*1024," and size < ",to_kbytes*1024))
+	write_cache(c("all"))
+}
+
 cat("Plotting Chart \n")
 plot(0,0,xlab="Tiempo transcurrido (ms)",ylab="Acumulativo (%)",xlim=c(0,600), ylim=c(0,1), type="n", axes=F)
 

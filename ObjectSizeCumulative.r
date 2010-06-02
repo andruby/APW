@@ -5,17 +5,20 @@ source("include.r")
 par(mar=c(4,4,1,2), cex=2)
 
 ## Get The Data
-between_time = "time between '2009-02-22 00:00:00' and '2009-02-28 23:59:59'"
-cat("Getting Data (Requests) \n")
-os_reqs = dbGetQuery(con, paste("select size from ",db," where size > 1 and ",between_time))
-cat("Getting Data (Uniques) \n")
-os_uniq = dbGetQuery(con, paste("select distinct MD5(uri),size from ",db," where size > 1 and ",between_time))
+if(!read_cache()) {
+	between_time = "time between '2009-02-22 00:00:00' and '2009-02-28 23:59:59'"
+	cat("Getting Data (Requests) \n")
+	os_reqs = dbGetQuery(con, paste("select size from ",db," where size > 1 and ",between_time))
+	cat("Getting Data (Uniques) \n")
+	os_uniq = dbGetQuery(con, paste("select distinct MD5(uri),size from ",db," where size > 1 and ",between_time))
 
-cat("Calculating cumulative functions \n")
-sort_reqs <- c(min(os_reqs$size),sort(sample(os_reqs$size, size = 8000)),max(os_reqs$size))
-ecdf_reqs <- ((1:length(sort_reqs))/length(sort_reqs)) * 100
-sort_uniq <- c(min(os_uniq$size),sort(sample(os_uniq$size, size = 8000)),max(os_uniq$size))
-ecdf_uniq <- ((1:length(sort_uniq))/length(sort_uniq)) * 100
+	cat("Calculating cumulative functions \n")
+	sort_reqs <- c(min(os_reqs$size),sort(sample(os_reqs$size, size = 8000)),max(os_reqs$size))
+	ecdf_reqs <- ((1:length(sort_reqs))/length(sort_reqs)) * 100
+	sort_uniq <- c(min(os_uniq$size),sort(sample(os_uniq$size, size = 8000)),max(os_uniq$size))
+	ecdf_uniq <- ((1:length(sort_uniq))/length(sort_uniq)) * 100
+	write_cache(c("sort_reqs","ecdf_reqs","sort_uniq","ecdf_uniq"))
+}
 
 # plot 
 cat("Plotting Chart \n")

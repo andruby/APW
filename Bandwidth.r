@@ -11,10 +11,10 @@ par(mar=c(4, 4, 1, 5.7),cex=1.8)
 mysql_year_seconds="(TIME_TO_SEC(time) + TO_DAYS(time) * (24*60*60)) div 1200"
 
 ## Get The Data
+cat("Getting Data (NON HIT BW) \n")
+bw_nonhit = dbGetQuery(con, paste("SELECT ",mysql_year_seconds," AS 'slot',sum(size) AS 'size' from ",db," where action not like '%HIT' group by ",mysql_year_seconds))
 cat("Getting Data (Total BW) \n")
 bw_total = dbGetQuery(con, paste("SELECT ",mysql_year_seconds," AS 'slot',sum(size) AS 'size' from ",db," group by ",mysql_year_seconds))
-cat("Getting Data (NON HIT BW) \n")
-bw_nonhit = dbGetQuery(con, paste("SELECT ",mysql_year_seconds," AS 'slot',sum(size) AS 'size' from ",db," where action like '%HIT' group by ",mysql_year_seconds))
 
 cat("Calculating X en Y's \n")
 bw_x = bw_total$slot

@@ -27,7 +27,7 @@ bw_diff = bw_total-bw_nonhit
 max_y = max(bw_total)
 
 cat("Plotting Chart \n")
-plot(bw_x,bw_total,xlab="Days",ylab="Ancho de banda (Mbps)", axes=F, col="blue", type="l", ylim=c(0,max_y))
+plot(bw_x,bw_total,xlab="Dias",ylab="Ancho de banda (Mbps)", axes=F, col="blue", type="l", ylim=c(0,max_y))
 axis(1, at=c(0:8)*2, labels=c(0:8)*2)
 axis(1)
 axis(2, las=2)
@@ -36,6 +36,6 @@ lines(bw_x,bw_total,col="blue",lwd=1)
 #lines(bw_x,bw_nonhit,col="red",lwd=2)
 lines(bw_x,bw_diff,col="green",lwd=2)
 
-legend(0.5,max_y*0.95,legend=c("Total","Diff"), col=c("blue","green"), lwd=c(1,2))
+legend(0.5,max_y*0.95,legend=c("Total","Ahorrado"), col=c("blue","green"), lwd=c(1,2))
 
 source("bottom.r")

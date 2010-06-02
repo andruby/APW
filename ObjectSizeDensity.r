@@ -3,11 +3,13 @@ scriptname = "ObjectSizeDensity"
 source("include.r")
 
 par(mar=c(4,4,1,1), cex=2)
+
 ## Get The Data
 cat("Getting Data (Requests) \n")
 data_all = dbGetQuery(con, paste("select size from ",db," where size > 1 and time between 2009-02-22 and 2009-03-01"))
 cat("Getting Data (Uniques) \n")
-data = dbGetQuery(con, paste("select avg(size) from ",db," where size > 1 group by MD5(uri)"))
+data = dbGetQuery(con, paste("select avg(size) from ",db," where size > 1 and time between 2009-02-22 and 2009-03-01 group by MD5(uri)"))
+
 ## Logaritmic Density Plot
 cat("Plotting Chart \n")
 plot(density(log10(data_all$size)),col="red",xlim=c(2,8),ylim=c(0,2),xlab="Tamaño de Objeto",ylab="Densidad (%)",axes=FALSE)

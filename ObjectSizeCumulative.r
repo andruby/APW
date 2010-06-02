@@ -15,7 +15,7 @@ sort_uniq <- c(min(os_uniq$size),sort(sample(os_uniq$size, size = 8000)),max(os_
 ecdf_uniq <- ((1:length(sort_uniq))/length(sort_uniq)) * 100
 # plot 
 cat("Plotting Chart \n")
-plot(sort_reqs,ecdf_reqs, type="n",log="x",ylab="Acumulativo (%)",xlab="Tamaño de Objeto",main="",xlim=c(100,100000000),axes=F)
+plot(sort_reqs,ecdf_reqs, type="n",log="x",ylab="Acumulativo (%)",xlab="Tamaño de Objeto",xlim=c(100,100000000),axes=F)
 axis(1,at=c(100,1000,10000,100000,1000000,10000000,100000000),labels=c("100B","1KB","10KB","100KB","1MB","10MB","100MB"))
 axis(2)
 lines(sort_reqs,ecdf_reqs,col="red",pch=46)

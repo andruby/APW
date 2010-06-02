@@ -19,7 +19,7 @@ tod_counts = (tod$count/sum(tod$count))*300
 # tod_bytes = (tod$size/sum(tod$size))*300
 max_y = max(tod_counts)
 cat("Plotting Chart \n")
-plot(tod_x,tod_counts,xlab="Hora del Día",ylab="Pedidos (% por hora)", axes=F, col="blue", type="l", ylim=c(0,max_y))
+plot(tod_x,tod_counts,xlab="Hora del Día",ylab="Pedidos (%)", axes=F, col="blue", type="l", ylim=c(0,max_y))
 axis(1, at=c(0:12)*2, labels=c(0:12)*2)
 axis(2, las=2)
 box()

@@ -37,6 +37,6 @@ lines(bw_x,bw_total,col="blue",lwd=1)
 #lines(bw_x,bw_nonhit,col="red",lwd=2)
 lines(bw_x,bw_diff,col="green",lwd=2)
 
-legend(2,max_y*0.95,legend=c("Total","Ahorrado"), col=c("blue","green"), lwd=c(1,2), bty="n")
+legend(0.5,max_y*,legend=c("Total","Ahorrado"), col=c("blue","green"), lwd=c(1,2), bty="n")
 
 source("bottom.r")

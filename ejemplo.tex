@@ -1,4 +1,4 @@
-\documentclass[twocolumn,twoside]{Jornadas}
+\documentclass[twocolumn]{Jornadas}
 \usepackage[utf8]{inputenc}
 \usepackage[dvips]{graphics}
 \usepackage{epsfig}
@@ -15,7 +15,6 @@
 %\hyphenation{}
 
 \begin{document}
-
 
 \title{Análisis de la Carga de Trabajo de un Servidor Proxy}
 
@@ -141,37 +140,14 @@ Asimismo, también resulta de gran interés eliminar la información no relevant
 En cuanto al procedimiento seguido para obtener las estadísticas de los logs de acceso, el software Calamardo bla bla bla...
 
 
-\section{Resultados}
+\section{Caracterización de la carga}
 \label{resultados}
 
 En esta sección presentamos los resultados de nuestro trabajo de caracterización de la carga. La sección se divide en tres subsecciones según el análisis se realize sobre el servidor proxy, los clientes o la red.
 
-\subsection{Análisis de las Características del Servidor Proxy}
-\label{servidores}
+\subsection{Códigos de estado}
 
-\subsubsection{Popularidad}
-\label{popularidad}
-
-\subsubsection{Tamaño de los objetos únicos y solicitados}
-\label{unicos_solicitados}
-
-\begin{figure*}[ht!]
-\centering
-\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeCumulative_full.eps}\label{Acumulativo}}
-\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeDensity_medium.eps} \label{Densidad}}
-\caption{Análisis de la distribución del tamaño de los objetos únicos y solicitados}
-\label{fig:tamObjetos}
-\end{figure*}
-
-Los resultados de los objetos solicitados se toman de todas las peticiones a objetos que realiza el cliente, aunque se solicite el mismo objeto varias veces. Por otra parte, los resultados de los objetos únicos son aquellos que sólo tienen en cuenta la primera referencia a un objeto concreto, descartando el resto.
-
-La figura \ref{Acumulativo} muestra la distribución acumulativa del tamaño de los objetos solicitados al servidor proxy. El eje X utiliza una escala logarítmica. El tamaño de la mayoría de los objetos se encuentra entre 100 y 100.000 bytes. La distribución de la Figura \ref{Acumulativo} es \emph{heavy-tailed} o de colas-pesadas. Una distribución se define como de colas-pesadas si, a pesar de la distribución de los valores pequeños de la variable aleatoria, la forma asintótica de la distribución es hiperbólica. %\textcolor{red}{paper de Mahanti, pag 15}
-
-En ella se puede ver como la curva de los objetos solicitados se encuentra por encima de la de los objetos únicos, esto ocurre porque los objetos más populares son los de tamaño pequeño y por tanto se generan más peticiones de estos objetos al servidor proxy. 
-
-En la figura \ref{Densidad} podemos observar la distribución del tamaño de los objetos, tanto únicos como pedidos, en una escala logarítmica. Se puede observar como ninguna de las dos curvas sigue una distribución predefinida.
-
-\subsubsection{Tipos de objetos (MIME)}
+\subsection{Tipos de objetos (MIME)}
 \label{mime}
 
 \begin{table*}[ht!]
@@ -199,16 +175,26 @@ En este apartado hemos analizado los tipos de archivos que han demandado los cli
 
 La Tabla \ref{table:contenido} muestra los diferentes tipos de ficheros pedidos al servidor proxy. El conjunto de imágenes es el que mayor número de peticiones genera, sobrepasando el 50\% del total de las peticiones. En segundo lugar aparecen los ficheros HTML con el 25.59\% del total de peticiones. 
 
-\subsubsection{Tamaño de los documentos}
-\label{documentos}
+\subsection{Tamaño de los objetos únicos y solicitados}
+\label{unicos_solicitados}
 
-\subsubsection{Localidad temporal y espacial}
-\label{loacalidad}
+\begin{figure*}[ht!]
+\centering
+\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeCumulative_full.eps}\label{Acumulativo}}
+\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeDensity_full.eps} \label{Densidad}}
+\caption{Análisis de la distribución del tamaño de los objetos únicos y solicitados}
+\label{fig:tamObjetos}
+\end{figure*}
 
-\subsection{Análisis de las Características de los Clientes}
-\label{clientes}
+Los resultados de los objetos solicitados se toman de todas las peticiones a objetos que realiza el cliente, aunque se solicite el mismo objeto varias veces. Por otra parte, los resultados de los objetos únicos son aquellos que sólo tienen en cuenta la primera referencia a un objeto concreto, descartando el resto.
 
-\subsubsection{Evolución de la carga del servidor durante el día}
+La figura \ref{Acumulativo} muestra la distribución acumulativa del tamaño de los objetos solicitados al servidor proxy. El eje X utiliza una escala logarítmica. El tamaño de la mayoría de los objetos se encuentra entre 100 y 100.000 bytes. La distribución de la Figura \ref{Acumulativo} es \emph{heavy-tailed} o de colas-pesadas. Una distribución se define como de colas-pesadas si, a pesar de la distribución de los valores pequeños de la variable aleatoria, la forma asintótica de la distribución es hiperbólica. %\textcolor{red}{paper de Mahanti, pag 15}
+
+En ella se puede ver como la curva de los objetos solicitados se encuentra por encima de la de los objetos únicos, esto ocurre porque los objetos más populares son los de tamaño pequeño y por tanto se generan más peticiones de estos objetos al servidor proxy. 
+
+En la figura \ref{Densidad} podemos observar la distribución del tamaño de los objetos, tanto únicos como pedidos, en una escala logarítmica. Se puede observar como ninguna de las dos curvas sigue una distribución predefinida.
+
+\subsection{Evolución de la carga del servidor durante el día}
 
 \begin{figure}[ht!]
 \begin{center}
@@ -224,26 +210,6 @@ En la curva de pedidos podemos observar que la carga resulta baja durante la noc
 Por otra parte, la curva de aciertos nos muestra como varía la tasa de aciertos con las horas del día. Puede observarse como conforme el número de peticiones aumenta el número de aciertos aumenta hasta que se estabiliza en un valor entre el 30\% y el 40\%.
 
 
-\subsubsection{Sesiones simultáneas sobre el mismo servidor}
-\label{simultaneas}
-
-\subsubsection{Longitud de sesión}
-\label{longitud}
-
-\subsubsection{Llegadas de clientes}
-\label{llegadas}
-
-\subsubsection{Periodos de inactividad}
-\label{periodos}
-
-\subsection{Análisis de las Características de la Red}
-\label{red}
-
-\subsubsection{Utilización del ancho de banda}
-\label{utilizacion}
-
-\subsubsection{Cálculo de latencia}
-\label{latencia}
 
 
 \section{Conclusiones}

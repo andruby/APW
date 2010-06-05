@@ -165,6 +165,21 @@ A su vez, en la gráfica \ref{fig:ahorrado} se muestra el ancho de banda consumi
 \end{figure}
 
 \subsection{Códigos de estado}
+En esta sección analizamos los códigos de respuesta del proxy, los cuales se pueden observar en la tabla \ref{table:codigos}. La mayoría de las peticiones de los clientes (68\%) terminan siendo satisfactorias y además, estas respuestas se corresponden a la mayoría de datos transferidos. La siguiente respuesta más común es \textit{Not Modified} con un 19\% de todo el tráfico HTTP pero, como esperábamos, no tienen impacto en los datos transferidos; ya que solo se transfieren las cabeceras HTTP al no haberse modificado el objeto.
+
+\begin{table*}
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c|c|c|c|c|} \hline
+  & Satisfactorio (200) & No Modificado (304) & Encontrado (302) & Otros\\\hline\hline
+Peticiones (\%)    & 68.20  & 19.41 & 2.86 & 9.53            \\\hline  
+Datos (\%)        & 95.37   & 0.34 & 0.15 & 5.12             \\\hline 
+\end{tabular}
+\caption{Códigos de estado}
+\label{table:codigos}
+\end{table*}
 
 
 \subsection{Tipos de objetos (MIME)}
@@ -216,7 +231,7 @@ En la figura \ref{Densidad} podemos observar la distribución del tamaño de los
 
 \subsection{Evolución de la carga del servidor durante el día}\label{cargaDia}
 
-\begin{figure}[ht!]
+\begin{figure}[]
 \begin{center}
   \includegraphics[scale=0.30,angle=-90]{figures/TimeOfDay3_full.eps}
 \end{center}

@@ -1,0 +1,348 @@
+\documentclass[twocolumn,twoside]{Jornadas}
+\usepackage[utf8]{inputenc}
+\usepackage[dvips]{graphics}
+\usepackage{epsfig}
+\usepackage[spanish]{babel}
+\usepackage{subfig}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\newtheorem{theorem}{Teorema}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\hyphenation{}
+
+\begin{document}
+
+
+\title{Análisis de la Carga de Trabajo de un Servidor Proxy}
+
+\author{%
+     Salvador Climent Bayarri, %
+     Andrew Fecheyr-Lippens, %
+     Alejandro Valero Bresó%
+	\thanks{Máster en Ingeniería de Computadores, Universidad Politécnica de Valencia, e-mails: {\tt jocliba@upvnet.upv.es, fecanfra@posgrado.upv.es, alvabre@gap.upv.es}}
+     }
+
+\maketitle
+% Oculta las cabeceras y los números de página.
+% Ambos elementos se añadirán durante la edición de las actas completas.
+\markboth{}{}
+\pagestyle{empty}
+\thispagestyle{empty} % Oculta el número de la primera página
+
+\begin{abstract}
+
+\end{abstract}
+
+\begin{keywords}
+
+\end{keywords}
+
+\section{Introducción}
+\label{intro}
+
+\PARstart{L}{os} objetivos del trabajo y la problemática asociada, el planteamiento
+del estudio y el procedimiento seguido, resultados y conclusiones.
+
+\subsection{Técnica de Caching}
+
+La popularidad del \emph{World Wide Web}, específicamente el alto porcentaje del tráfico HTTP, es la primera razón por la que el tráfico en Internet se ha incrementado con los años. Para entender este incremento del tráfico, podemos destacar las cifras de que a principios de los años 90, los estudios mostraban que el 44\% del tráfico en Internet era originado por peticiones FTP, mientras que durante los primeros años del nuevo milenio, entre un 75 y un 80\% del tráfico en Internet está formado por la actividad HTTP \cite{barish}. Este incremento del tráfico en Internet lleva asociada la demanda de escalabilidad en su infraestructura. El crecimiento exponencial de la Web desprovisto de soluciones escalables resulta en una carga en la red prohibitiva y unos tiempos de respuesta inaceptables. Además, el uso de la Web forma parte de la vida rutinaria y los negocios de las personas, con lo que las mejoras de las prestaciones en la Web es un hecho deseable, pero sobretodo necesario.
+
+El presente estudio comprueba que la gran mayoría (tanto en número de peticiones como en bytes transmitidos) de los objetos HTTP demandados por los usuarios son imágenes y código HTML. Con vistas al futuro, el hecho de incluir la etiqueta de vídeo en el nuevo estándar HTML5 y la posibilidad de realizar HTTPStreaming, nos hace pensar que los vídeos podrán llegar a ser una parte importante del tráfico en la Web.
+
+Existen diversas técnicas para mejorar las prestaciones de la Web. Las páginas Web pueden hacer uso de clusters para manejar las peticiones de los clientes. Por otra parte, se pueden mejorar los enlaces de la red para conseguir mejor ancho de banda y así manejar el volumen creciente de los datos que se transfieren. Sin embargo, estas técnicas representan soluciones a corto plazo. El crecimiento de Internet en términos del número total de bytes transmitidos entre las máquinas y el inesperado uso masivo del protocolo HTTP, hacen de la técnica de Web caching la solución más atractiva y la que más atención ha recibido. Se trata de una de las técnicas más importantes de reducción de tráfico en la red. La técnica de Web caching consiste en almacenar documentos en caches cercanas a los clientes que solicitan los documentos. Los aciertos en la cache eliminan la necesidad de contactar con el servidor, con lo cual representa una forma efectiva de reducción de la demanda de ancho de banda, mejora de la disponibilidad del servidor Web (evita que se convierta en un \emph{hotspot}) y reducción de la latencia de la red.
+
+La técnica de caching puede mejorar la percepción que tienen los usuarios en cuanto a las prestaciones de la red. Cuando sirven a los clientes localmente, las caches ocultan la latencia resultante de las redes de gran tamaño. Cuando se produce un fallo local de cache, el proveedor original sirve las peticiones de los clientes.
+Este hecho cobra gran importancia con los objetos de naturaleza temporal (datos multimedia como audio o vídeo) donde mantener una tasa de transferencia constante y el tiempo de respuesta son particularmente importantes.
+
+\subsection{Caracterización de la Carga}
+Los beneficios de la técnica de caching han sido demostrados mediante algunos prototipos de investigación y la experimentación con grandes niveles de caching en la Web \cite{squid}. 
+
+La caracterización de la carga es importante porque la técnica de caching explota propiedades específicas de los accesos para mejorar las prestaciones como la localidad temporal y la compartición. Además, es una componente crucial del diseño de sistemas debido a que permite entender el estado actual del sistema. Mediante la caracterización de un sistema en el tiempo se pueden observar los cambios que el sistema ha sufrido. La caracterización de la carga también es necesaria para el diseño de nuevos componentes.
+
+En la bibliografía existen multitud de artículos referentes a la caracterización de la carga. Podemos referenciar algunos artículos que presentan cierta similitud con nuestro análisis de la carga como la caracterización de la carga de Arlitt et al. \cite{arlitt} y Mahanti et al. \cite{mahanti}.
+
+El resto del artículo se organiza de la siguiente manera: la
+Sección \ref{meto} muestra como se distribuyen los datos contenidos en logs de acceso y como se lleva a cabo la reducción de datos. La Sección \ref{resultados} analiza los resultados
+obtenidos mediante el procesamiento de los logs, distinguiendo entre el servidor proxy, los clientes y la red. Finalmente, la Sección \ref{conclusiones} ofrece las conclusiones más relevantes.
+
+\section{Metodología}
+\label{meto}
+
+Los logs de acceso del servidor proxy fueron recogidos en la Universidad Politécnica de Valencia entre los días 16 de febrero de 2009 y 3 de marzo de 2009, con lo que se obtuvo un contenido total de logs de acceso de 23GBytes. Antes de realizar el procesamiento de los logs, resulta necesario interpretar los datos contenidos en las entradas de los mismos, así como reducir la cantidad de datos eliminando las entradas incorrectas que afectan a la caracterización de la carga y los datos no relevantes para reducir el tiempo de procesado de la carga. Esta sección trata estos aspectos.
+
+\subsection{Interpretación de los Logs}
+
+Cada entrada de un log de acceso contiene información de una sola petición de un cliente recibida por el proxy Web. COn esto, una entrada contiene la siguiente información:
+
+\begin{description}
+\item[Timestamp] El momento en el que una petición ha sido completada.
+\item[Elapsed] Considera el número de milisegundos en los que la transacción ha ocupado la cache.
+\item[Remotehost] La dirección IP del cliente.
+\item[Code/status] Consta de dos entradas separadas mediante una barra. Almacena el resultado de la transacción. Consultar la lista de códigos para obtener los posibles valores.
+El estado es un número asociado al código.
+\item[Bytes] El tamaño de los datos enviados al cliente.
+\item[Method] El método de petición para obtener un objeto.
+\item[URL] Este campo contiene la URL solicitada por el cliente.
+\item[rfc931] No se utiliza por problemas de rendimiento.
+\item[Hierarchy code] Información de herencia de las caches. En el caso que nos ocupa solo tenemos un servidor de cache, así que los fallos de cache siempre se enviarán al servidor Web. 
+\item[Content type] Consiste en el tipo de objeto tal y como se especifica en la cabecera de respuesta HTTP.
+\end{description}
+
+La siguiente lista muestra los posibles códigos asociados a cada entrada de un log de acceso:
+
+\begin{description}
+\item[TCP\_HIT] Una copia válida del objeto pedido se encuentra en la cache y es leída del disco.
+\item[TCP\_MEM\_HIT] Una copia válida del objeto pedido se encuentra en la cache y en memoria, así que no debe ser leída del disco.
+\item[TCP\_NEGATIVE\_HIT] La petición se realiza sobre un objeto \emph{negativamente-cacheado}. El cacheado negativo se refiere a cachear ciertos tipos de errores, como \emph{404 Not Found}. El parámetro de configuración \emph{negative\_ttl} controla la cantidad de tiempo de cacheo de estos errores.
+\item[TCP\_MISS] El objeto pedido no se encuentra en la cache.
+\item[TCP\_REFRESH\_HIT] Una copia del objeto pedido que ha expirado se encuentra en la cache. Squid realiza una petición \emph{If-Modified-Since} y la respuesta es \emph{Not Modified}.
+\item[TCP\_REFRESH\_FAIL\_HIT] Una copia del objeto pedido que ha expirado se encuentra en la cache. Squid realiza una petición \emph{If-Modified-Since} pero ésta provoca un fallo. La copia vieja (caducada) del objeto se envía al cliente.
+\item[TCP\_REFRESH\_MISS] Una copia del objeto pedido que ha expirado se encuentra en la cache. Squid realiza una petición \emph{If-Modified-Since} y recibe una copia nueva de un objeto diferente.
+\item[TCP\_CLIENT\_REFRESH\_MISS] El cliente emite una petición con el pragma \emph{no-cache} (\emph{Recarga} - manejada como un fallo)
+\item[TCP\_IMS\_HIT] Una petición \emph{If-Modified-Since GET} es recibida del cliente. Una copia válida del objeto (fresca) se encuentra en la cache.
+\item[TCP\_IMS\_MISS] Una petición \emph{If-Modified-Since GET} es recibida del cliente. El objeto pedido no es encuentra en la cache (caducado).
+\item[TCP\_SWAPFILE] Se pensaba que el objeto se encontraba en la cache, pero no puede ser accedido.
+\item[TCP\_DENIED] Acceso denegado para la petición.
+\end{description}
+
+\subsection{Reducción de Datos}
+\label{red_datos}
+
+Resulta de gran interés localizar los datos incorrectos que aparecen en los logs de acceso y que no deben ser cacheados, porque de lo contrario, provocarían efectos anómalos en la caracterización de la carga. Para comprobar este efecto, hemos considerado un subconjunto de la carga total de los logs de acceso, escogiendo aleatoriamente un 5\% de la carga total para así introducir una pequeña cantidad de datos en una base de datos de MySQL. Este subconjunto de datos permite que las tablas de MySQL se almacenen en la memoria RAM de la máquina, con lo cual, las consultas o testeos para obtener los datos anómalos se realizan de forma rápida.
+La Tabla \ref{table:url} muestra las URLs que han sido filtradas, así como el número de peticiones a la URL y el tamaño total de las mismas.
+%Por otra parte, en las Tablas \ref{table:full} y \ref{table:medium} podemos observar como el 5\% de la carga total puede considerarse representativa debido a que los porcentajes obtenidos frente a un análisis completo de la carga son muy similares. 
+
+\begin{table*}[ht!]
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c|c|} \hline
+URL Filtrada                                  & Peticiones & Tamaño Total Peticiones (GB) \\\hline\hline
+http://muchachadanui.rtve.es/favicon.ico      & 2423780    & 1.7                          \\\hline  
+http://172.18.18.71/mjpg/video.mjpg           & 400        & 314.4                        \\\hline 
+http://172.18.18.72/mjpg/video.mjpg           & 320        & 190.1                        \\\hline 
+http://172.17.69.324/axis-cgl/jpg/Image.cgi?  & 5300740    & 94.5                         \\\hline 
+Otros .cgi?                                   & 208960     & 1.4                          \\\hline 
+\end{tabular}
+\caption{URLs Filtradas}
+\label{table:url}
+\end{table*}
+
+
+Con el filtrado de las URL anteriores el volumen total de los logs de acceso se reduce en un 3.5\%.
+
+Asimismo, también resulta de gran interés eliminar la información no relevante para obtener un volumen de datos menor que el original con el objetivo de procesar los logs de manera más rápida. Las optimizaciones que hemos tenido en cuenta para que el volumen de los logs de acceso se reduzca son: i) eliminar la fila \emph{rfc931} porque siempre presenta el mismo valor '-', así como la fila \emph{hierarchy code} porque sólo hay un proxy en nuestro escenario, ii) reemplazar las filas que contienen VARCHAR por ENUMs que contienen todos los valores posibles (action, method y content para MIME) y iii) almacenar la dirección IP como un entero utilizando la función INET\_ATON() de MySQL.
+
+En cuanto al procedimiento seguido para obtener las estadísticas de los logs de acceso, el software Calamardo bla bla bla...
+
+
+\section{Resultados}
+\label{resultados}
+
+En esta sección presentamos los resultados de nuestro trabajo de caracterización de la carga. La sección se divide en tres subsecciones según el análisis se realize sobre el servidor proxy, los clientes o la red.
+
+\subsection{Análisis de las Características del Servidor Proxy}
+\label{servidores}
+
+\subsubsection{Popularidad}
+\label{popularidad}
+
+\subsubsection{Tamaño de los objetos únicos y solicitados}
+\label{unicos_solicitados}
+
+\begin{figure*}[ht!]
+\centering
+\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeCumulative_full.eps}\label{Acumulativo}}
+\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeDensity_medium.eps} \label{Densidad}}
+\caption{Análisis de la distribución del tamaño de los objetos únicos y solicitados}
+\label{fig:tamObjetos}
+\end{figure*}
+
+Los resultados de los objetos solicitados se toman de todas las peticiones a objetos que realiza el cliente, aunque se solicite el mismo objeto varias veces. Por otra parte, los resultados de los objetos únicos son aquellos que sólo tienen en cuenta la primera referencia a un objeto concreto, descartando el resto.
+
+La figura \ref{Acumulativo} muestra la distribución acumulativa del tamaño de los objetos solicitados al servidor proxy. El eje X utiliza una escala logarítmica. El tamaño de la mayoría de los objetos se encuentra entre 100 y 100.000 bytes. La distribución de la Figura \ref{Acumulativo} es \emph{heavy-tailed} o de colas-pesadas. Una distribución se define como de colas-pesadas si, a pesar de la distribución de los valores pequeños de la variable aleatoria, la forma asintótica de la distribución es hiperbólica. %\textcolor{red}{paper de Mahanti, pag 15}
+
+En ella se puede ver como la curva de los objetos solicitados se encuentra por encima de la de los objetos únicos, esto ocurre porque los objetos más populares son los de tamaño pequeño y por tanto se generan más peticiones de estos objetos al servidor proxy. 
+
+En la figura \ref{Densidad} podemos observar la distribución del tamaño de los objetos, tanto únicos como pedidos, en una escala logarítmica. Se puede observar como ninguna de las dos curvas sigue una distribución predefinida.
+
+\subsubsection{Tipos de objetos (MIME)}
+\label{mime}
+
+\begin{table*}[ht!]
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c|c|c|} \hline
+Contenido   & Peticiones & Peticiones (\%) &Tamaño Total (GB) \\\hline\hline
+Imágenes    & 80339008   & 51.4 &483.2             \\\hline  
+HTML        & 39663602   & 25.59 &199.7             \\\hline 
+Javascript  & 16893965   & 10.9 &105.5             \\\hline 
+Flash       & 14947413   & 9.65 & 99.9              \\\hline 
+Documentos  & 2727847    & 1.76 &49.0              \\\hline
+Vídeo       & 180369     & 0.12 & 558.5             \\\hline 
+Audio       & 128793     & 0.08 & 114.5             \\\hline 
+Otros       & 85729      & 0.06 & 661.4             \\\hline\hline
+Total & 154966726 & 100 & 2271.7 \\\hline
+\end{tabular}
+\caption{Tipos de objetos solicitados}
+\label{table:contenido}
+\end{table*}
+
+En este apartado hemos analizado los tipos de archivos que han demandado los clientes. Hemos divido los archivos en las categorías imágenes, HTML, javascript, flash, documentos, video, audio y otros. Para ello, hemos utilizado la etiqueta \emph{Content Type}. Hemos incluido en los grupos imágenes, audio y video, los objetos cuyo \emph{Content Type} empieza por \textit{image/}, \textit{audio/} y \textit{video/} respectivamente. En el grupo HTML hemos incluido los objetos cuyo \emph{Content Type} incluye \textit{html}, \textit{css} ó \textit{text/xml}. Para el grupo javascript hemos seleccionado los objetos que incluían \textit{javascript} en su \emph{Content Type}. Para incluir un objeto en el grupo flash el \emph{Content Type} debía contener las cadenas \textit{flash}, \textit{flv} o \textit{shockwave}. Por último, en el grupo documentos hemos incluido los objetos cuyo \emph{Content Type} incluía \textit{pdf}, \textit{doc}, \textit{xls}, \textit{word},\textit{excel} ó \textit{powerpoint}.
+
+La Tabla \ref{table:contenido} muestra los diferentes tipos de ficheros pedidos al servidor proxy. El conjunto de imágenes es el que mayor número de peticiones genera, sobrepasando el 50\% del total de las peticiones. En segundo lugar aparecen los ficheros HTML con el 25.59\% del total de peticiones. 
+
+\subsubsection{Tamaño de los documentos}
+\label{documentos}
+
+\subsubsection{Localidad temporal y espacial}
+\label{loacalidad}
+
+\subsection{Análisis de las Características de los Clientes}
+\label{clientes}
+
+\subsubsection{Evolución de la carga del servidor durante el día}
+
+\begin{figure}[ht!]
+\begin{center}
+  \includegraphics[scale=0.30,angle=-90]{figures/TimeOfDay3_full.eps}
+\end{center}
+\caption{Time Of Day} \label{Timeday}
+\end{figure}
+
+La Figura \ref{Timeday} muestra el análisis de las solicitudes y aciertos según el momento del día. La gráfica se debe interpretar con cautela, ya que la escala para la curva de pedidos llega hasta el 10\% mientras que la curva de aciertos es sobre el 100\%. 
+
+En la curva de pedidos podemos observar que la carga resulta baja durante la noche porque los usuarios o trabajadores de la UPV se encuentran usualmente durmiendo en sus casas. La carga aumenta durante las horas de la jornada laboral llegando a su punto máximo a las 12 horas del mediodía. Se puede incluso observar un ligero descenso en las horas de comida (13-15h) y un ligero aumento por la tarde, pero no mayor que durante las horas laborales matinales.
+
+Por otra parte, la curva de aciertos nos muestra como varía la tasa de aciertos con las horas del día. Puede observarse como conforme el número de peticiones aumenta el número de aciertos aumenta hasta que se estabiliza en un valor entre el 30\% y el 40\%.
+
+
+\subsubsection{Sesiones simultáneas sobre el mismo servidor}
+\label{simultaneas}
+
+\subsubsection{Longitud de sesión}
+\label{longitud}
+
+\subsubsection{Llegadas de clientes}
+\label{llegadas}
+
+\subsubsection{Periodos de inactividad}
+\label{periodos}
+
+\subsection{Análisis de las Características de la Red}
+\label{red}
+
+\subsubsection{Utilización del ancho de banda}
+\label{utilizacion}
+
+\subsubsection{Cálculo de latencia}
+\label{latencia}
+
+
+\section{Conclusiones}
+\label{conclusiones}
+
+
+
+\nocite{*}
+\bibliographystyle{Jornadas}
+
+\begin{thebibliography}{1}
+
+
+\bibitem{squid}
+\newblock {\em Squid Internet Object Cache},
+\newblock {\em available online at http://squid.nlanr.net}
+
+\bibitem{mahanti}
+A. Mahanti and M. Seltzer,
+\newblock {Web Proxy Workload Characterization},
+\newblock {\em Technical Report, Department of Computer Science, University of Saskatchewan},
+\newblock {February, 1999}
+
+\bibitem{arlitt}
+M. Arlitt, R. Friedrich, and T. Jin,
+\newblock {Workload Characterization of a Web Proxy in a Cable Modem Environment},
+\newblock {\em ACM Performance Evaluation Review},
+\newblock {vol. 27, no. 2, pp. 25-36, 1999}
+
+\bibitem{duska}
+B. Dushka, D. Marwood, and M. Feeley,
+\newblock {The Measured Access Characteristics of World-Wide Web Client Proxy Caches},
+\newblock {\em Proceedings of USENIX Symposium of Internet Technologies and Systems (USITS)},
+\newblock {pp. 23-35, 1997}
+
+\bibitem{Breslau}
+L. Breslau, P. Cao, L. Fan, G. Phillips, and S. Shenker,
+\newblock {Web Caching and Zipf-Like Distributions: Evidence and Implications},
+\newblock {\em Proceedings of the IEEE Infocom},
+\newblock {1999}
+
+\bibitem{barish}
+G. Barish and K. Obraczka,
+\newblock {World Wide Web Caching: Trends and Techniques},
+\newblock {\em  IEEE Communications Magazine},
+\newblock {vol. 38, no. 5, pp. 178-184, 2000}
+
+\end{thebibliography}
+
+\end{document}
+
+
+Mediante el análisis de todos los logs de acceso se obtienen resultados como los de la Tabla \ref{table:full}, donde se muestran las ocurrencias de cada código en el servidor proxy y el porcentaje sobre el total en cada caso. Asimismo, también se indica el número total de bytes, el porcentaje sobre el total y el tamaño medio de cada código. Por otra parte, la Tabla \ref{table:medium} muestra las mismas métricas que la Tabla \ref{table:full} pero para el análisis de un 5\% del total de los logs. Podemos observar que las diferencias respecto a los resultados del análisis de todos los logs son insignificantes. %Sin embargo, en el presente estudio se utilizará toda la carga disponible a excepción de los datos anómalos que serán estudiados y posteriormente eliminados (Sección \ref{red_datos}).
+
+\begin{table*}[ht!]
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c||c|c||c|c||c|} \hline
+Action                     & Avg (elapsed) & Requests  & Requests (\%) & Total Bytes   & Total Bytes (\%) & Avg (size)  \\\hline\hline
+TCP\_MISS                  & 2589          & 93642436  & 57.5\%        & 2687676297251 & 87.5\%           & 28701       \\\hline
+TCP\_HIT                   & 128           & 21115028  & 13.0\%        & 244658768290  & 8.0\%            & 11587       \\\hline
+TCP\_IMS\_HIT              & 24            & 19345175  & 11.9\%        & 8581626088    & 0.3\%            & 444         \\\hline
+TCP\_MEM\_HIT              & 25            & 15674785  & 9.6\%         & 39922928867   & 1.3\%            & 2547        \\\hline
+TCP\_CLIENT\_REFRESH\_MISS & 384           & 7270281   & 4.5\%         & 37379224978   & 1.2\%            & 5141        \\\hline
+TCP\_REFRESH\_HIT          & 408           & 3916798   & 2.4\%         & 39508800757   & 1.3\%            & 10087       \\\hline
+TCP\_NEGATIVE\_HIT         & 26            & 653367    & 0.4\%         & 1073608884    & 0.0\%            & 1643        \\\hline
+TCP\_DENIED                & 15            & 635181    & 0.4\%         & 884415617     & 0.0\%            & 1392        \\\hline
+TCP\_REFRESH\_MISS         & 830           & 523438    & 0.3\%         & 10232165142   & 0.3\%            & 19548       \\\hline
+TCP\_SWAPFAIL\_MISS        & 424           & 117461    & 0.1\%         & 949287076     & 0.0\%            & 8082        \\\hline
+NONE                       & 16            & 1541      & 0.0\%         & 2482551       & 0.0\%            & 1611        \\\hline
+TOTAL                      &               & 162895491 & 100.0\%       & 3070869605501 & 100.0\%          &             \\\hline  
+\end{tabular}
+\caption{Full}
+\label{table:full}
+\end{table*}
+
+\begin{table*}[ht!]
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c||c|c||c|c||c|} \hline
+Action                     & Avg (elapsed) & Requests  & Requests (\%) & Total Bytes   & Total Bytes (\%) & Avg (size)  \\\hline\hline
+TCP\_MISS                  & 2.602         & 4682469   & 57.5\%        & 136225564908  & 87.6\%           & 29093       \\\hline
+TCP\_HIT                   & 130           & 1056716   & 13.0\%        & 12278428943   & 7.9\%            & 11619       \\\hline
+TCP\_IMS\_HIT              & 24            & 967020    & 11.9\%        & 415694060     & 0.3\%            & 430         \\\hline
+TCP\_MEM\_HIT              & 25            & 783806    & 9.6\%         & 1988916265    & 1.3\%            & 2538        \\\hline
+TCP\_CLIENT\_REFRESH\_MISS & 370           & 363373    & 4.5\%         & 1875667124    & 1.2\%            & 5162        \\\hline
+TCP\_REFRESH\_HIT          & 382           & 195894    & 2.4\%         & 1981400811    & 1.3\%            & 10115       \\\hline
+TCP\_NEGATIVE\_HIT         & 26            & 32876     & 0.4\%         & 54225501      & 0.0\%            & 1649        \\\hline
+TCP\_DENIED                & 15            & 31832     & 0.4\%         & 44374578      & 0.0\%            & 1394        \\\hline
+TCP\_REFRESH\_MISS         & 817           & 26413     & 0.3\%         & 541613161     & 0.3\%            & 20506       \\\hline
+TCP\_SWAPFAIL\_MISS        & 284           & 5913      & 0.1\%         & 50925730      & 0.0\%            & 8613        \\\hline
+NONE                       & 12            & 92        & 0.0\%         & 148212        & 0.0\%            & 1611        \\\hline
+TOTAL                      &               & 8146404   & 100.0\%       & 155456959293  & 100.0\%          &             \\\hline  
+\end{tabular}
+\caption{Medium (5\% sample)}
+\label{table:medium}
+\end{table*}
+

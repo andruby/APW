@@ -143,25 +143,45 @@ En cuanto al procedimiento seguido para obtener las estadísticas de los logs de
 \section{Caracterización de la carga}
 \label{resultados}
 
-En esta sección presentamos los resultados de nuestro trabajo de caracterización de la carga. La sección se divide en tres subsecciones según el análisis se realize sobre el servidor proxy, los clientes o la red.
+En esta sección presentamos los resultados de nuestro trabajo de caracterización de la carga. La sección se divide en tres subsecciones según el análisis se realice sobre el servidor proxy, los clientes o la red.
+
+\subsection{Eficiencia del servidor proxy}
+A partir de los logs del proxy podemos extraer información sobre el ancho de banda ahorrado por la universidad al encontrarse los objetos demandados por los usuarios en la caché del proxy. Además, también podemos observar la ganancia en el tiempo de respuesta cuando el objeto está en la caché.
+
+En la \ref{fig:elapsed} se pueden observar el tiempo transcurrido para resolver la petición dependiendo de el tipo de acierto o fallo de caché. Se aprecia una gran diferencia entre el tiempo necesario para resolver una petición de un objeto que ya está en caché y el tiempo necesario para resolver una petición de un objeto que no está en caché. Por otra parte, así como la diferencia de tiempo transcurrido entre diferentes tipos de fallo de caché es bastante apreciable, la diferencia de tiempo transcurrido para los diferentes tipos de aciertos no es tan significativa.
+
+A su vez, en la gráfica \ref{fig:ahorrado} se muestra el ancho de banda consumido por el total de las peticiones realizadas al proxy y el ancho de banda no consumido gracias a los aciertos de caché, en las dos semanas de las que se disponen datos. Como se observa, el máximo ancho de banda ahorrado está alrededor de 6 Mbps, que es aproximadamente un 15\% del ancho de banda en los momentos de máxima demanda. También se puede observar como el ancho de banda ahorrado es prácticamente nulo en los momentos de más baja demanda, veremos esto con más detenimiento en la sección \ref{cargaDia}.
+
+\begin{figure}[ht!]
+\includegraphics[scale=0.30,angle=-90]{figures/Bandwidth_full.eps}\label{fig:ahorrado}
+\caption{Ancho de banda total y ahorrado}
+\label{fig:ahorrado}
+\end{figure}
+
+\begin{figure}[ht!]
+\includegraphics[scale=0.30,angle=-90]{figures/ElapsedTimeAll_1k_full.eps} \label{fig:elapsed}
+\caption{Tiempo necesario para resolver una petición dependiendo del tipo de acierto/fallo de caché}
+\label{fig:elapsed}
+\end{figure}
 
 \subsection{Códigos de estado}
+
 
 \subsection{Tipos de objetos (MIME)}
 \label{mime}
 
-\begin{table*}[ht!]
+\begin{table}
 \centering
 \renewcommand{\baselinestretch}{1.5}
 \scriptsize
 %\tiny \footnotesize
 \begin{tabular}{|l||c|c|c|} \hline
-Contenido   & Peticiones & Peticiones (\%) &Tamaño Total (GB) \\\hline\hline
+Contenido   & Peticiones & Peticiones (\%) &Tam. Total (GB) \\\hline\hline
 Imágenes    & 80339008   & 51.4 &483.2             \\\hline  
 HTML        & 39663602   & 25.59 &199.7             \\\hline 
 Javascript  & 16893965   & 10.9 &105.5             \\\hline 
 Flash       & 14947413   & 9.65 & 99.9              \\\hline 
-Documentos  & 2727847    & 1.76 &49.0              \\\hline
+Docs  & 2727847    & 1.76 &49.0              \\\hline
 Vídeo       & 180369     & 0.12 & 558.5             \\\hline 
 Audio       & 128793     & 0.08 & 114.5             \\\hline 
 Otros       & 85729      & 0.06 & 661.4             \\\hline\hline
@@ -169,7 +189,7 @@ Total & 154966726 & 100 & 2271.7 \\\hline
 \end{tabular}
 \caption{Tipos de objetos solicitados}
 \label{table:contenido}
-\end{table*}
+\end{table}
 
 En este apartado hemos analizado los tipos de archivos que han demandado los clientes. Hemos divido los archivos en las categorías imágenes, HTML, javascript, flash, documentos, video, audio y otros. Para ello, hemos utilizado la etiqueta \emph{Content Type}. Hemos incluido en los grupos imágenes, audio y video, los objetos cuyo \emph{Content Type} empieza por \textit{image/}, \textit{audio/} y \textit{video/} respectivamente. En el grupo HTML hemos incluido los objetos cuyo \emph{Content Type} incluye \textit{html}, \textit{css} ó \textit{text/xml}. Para el grupo javascript hemos seleccionado los objetos que incluían \textit{javascript} en su \emph{Content Type}. Para incluir un objeto en el grupo flash el \emph{Content Type} debía contener las cadenas \textit{flash}, \textit{flv} o \textit{shockwave}. Por último, en el grupo documentos hemos incluido los objetos cuyo \emph{Content Type} incluía \textit{pdf}, \textit{doc}, \textit{xls}, \textit{word},\textit{excel} ó \textit{powerpoint}.
 
@@ -194,7 +214,7 @@ En ella se puede ver como la curva de los objetos solicitados se encuentra por e
 
 En la figura \ref{Densidad} podemos observar la distribución del tamaño de los objetos, tanto únicos como pedidos, en una escala logarítmica. Se puede observar como ninguna de las dos curvas sigue una distribución predefinida.
 
-\subsection{Evolución de la carga del servidor durante el día}
+\subsection{Evolución de la carga del servidor durante el día}\label{cargaDia}
 
 \begin{figure}[ht!]
 \begin{center}

@@ -1,0 +1,54 @@
+%Para comprobar este efecto, hemos considerado un subconjunto de la carga total de los logs de acceso, escogiendo aleatoriamente un 5\% de la carga total para así introducir una pequeña cantidad de datos en una base de datos de MySQL. Este subconjunto de datos permite que las tablas de MySQL se almacenen en la memoria RAM de la máquina, con lo cual, las consultas o testeos para obtener los datos anómalos se realizan de forma rápida.
+
+%Por otra parte, en las Tablas \ref{table:full} y \ref{table:medium} podemos observar como el 5\% de la carga total puede considerarse representativa debido a que los porcentajes obtenidos frente a un análisis completo de la carga son muy similares.
+
+Mediante el análisis de todos los logs de acceso se obtienen resultados como los de la Tabla \ref{table:full}, donde se muestran las ocurrencias de cada código en el servidor proxy y el porcentaje sobre el total en cada caso. Asimismo, también se indica el número total de bytes, el porcentaje sobre el total y el tamaño medio de cada código. Por otra parte, la Tabla \ref{table:medium} muestra las mismas métricas que la Tabla \ref{table:full} pero para el análisis de un 5\% del total de los logs. Podemos observar que las diferencias respecto a los resultados del análisis de todos los logs son insignificantes. %Sin embargo, en el presente estudio se utilizará toda la carga disponible a excepción de los datos anómalos que serán estudiados y posteriormente eliminados (Sección \ref{red_datos}).
+
+\begin{table*}[ht!]
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c||c|c||c|c||c|} \hline
+Action                     & Avg (elapsed) & Requests  & Requests (\%) & Total Bytes   & Total Bytes (\%) & Avg (size)  \\\hline\hline
+TCP\_MISS                  & 2589          & 93642436  & 57.5\%        & 2687676297251 & 87.5\%           & 28701       \\\hline
+TCP\_HIT                   & 128           & 21115028  & 13.0\%        & 244658768290  & 8.0\%            & 11587       \\\hline
+TCP\_IMS\_HIT              & 24            & 19345175  & 11.9\%        & 8581626088    & 0.3\%            & 444         \\\hline
+TCP\_MEM\_HIT              & 25            & 15674785  & 9.6\%         & 39922928867   & 1.3\%            & 2547        \\\hline
+TCP\_CLIENT\_REFRESH\_MISS & 384           & 7270281   & 4.5\%         & 37379224978   & 1.2\%            & 5141        \\\hline
+TCP\_REFRESH\_HIT          & 408           & 3916798   & 2.4\%         & 39508800757   & 1.3\%            & 10087       \\\hline
+TCP\_NEGATIVE\_HIT         & 26            & 653367    & 0.4\%         & 1073608884    & 0.0\%            & 1643        \\\hline
+TCP\_DENIED                & 15            & 635181    & 0.4\%         & 884415617     & 0.0\%            & 1392        \\\hline
+TCP\_REFRESH\_MISS         & 830           & 523438    & 0.3\%         & 10232165142   & 0.3\%            & 19548       \\\hline
+TCP\_SWAPFAIL\_MISS        & 424           & 117461    & 0.1\%         & 949287076     & 0.0\%            & 8082        \\\hline
+NONE                       & 16            & 1541      & 0.0\%         & 2482551       & 0.0\%            & 1611        \\\hline
+TOTAL                      &               & 162895491 & 100.0\%       & 3070869605501 & 100.0\%          &             \\\hline  
+\end{tabular}
+\caption{Full}
+\label{table:full}
+\end{table*}
+
+\begin{table*}[ht!]
+\centering
+\renewcommand{\baselinestretch}{1.5}
+\scriptsize
+%\tiny \footnotesize
+\begin{tabular}{|l||c||c|c||c|c||c|} \hline
+Action                     & Avg (elapsed) & Requests  & Requests (\%) & Total Bytes   & Total Bytes (\%) & Avg (size)  \\\hline\hline
+TCP\_MISS                  & 2.602         & 4682469   & 57.5\%        & 136225564908  & 87.6\%           & 29093       \\\hline
+TCP\_HIT                   & 130           & 1056716   & 13.0\%        & 12278428943   & 7.9\%            & 11619       \\\hline
+TCP\_IMS\_HIT              & 24            & 967020    & 11.9\%        & 415694060     & 0.3\%            & 430         \\\hline
+TCP\_MEM\_HIT              & 25            & 783806    & 9.6\%         & 1988916265    & 1.3\%            & 2538        \\\hline
+TCP\_CLIENT\_REFRESH\_MISS & 370           & 363373    & 4.5\%         & 1875667124    & 1.2\%            & 5162        \\\hline
+TCP\_REFRESH\_HIT          & 382           & 195894    & 2.4\%         & 1981400811    & 1.3\%            & 10115       \\\hline
+TCP\_NEGATIVE\_HIT         & 26            & 32876     & 0.4\%         & 54225501      & 0.0\%            & 1649        \\\hline
+TCP\_DENIED                & 15            & 31832     & 0.4\%         & 44374578      & 0.0\%            & 1394        \\\hline
+TCP\_REFRESH\_MISS         & 817           & 26413     & 0.3\%         & 541613161     & 0.3\%            & 20506       \\\hline
+TCP\_SWAPFAIL\_MISS        & 284           & 5913      & 0.1\%         & 50925730      & 0.0\%            & 8613        \\\hline
+NONE                       & 12            & 92        & 0.0\%         & 148212        & 0.0\%            & 1611        \\\hline
+TOTAL                      &               & 8146404   & 100.0\%       & 155456959293  & 100.0\%          &             \\\hline  
+\end{tabular}
+\caption{Medium (5\% sample)}
+\label{table:medium}
+\end{table*}
+

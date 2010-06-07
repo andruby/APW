@@ -253,8 +253,14 @@ En la curva de pedidos podemos observar que la carga resulta baja durante la noc
 
 Por otra parte, la curva de aciertos nos muestra como varía la tasa de aciertos con las horas del día. Puede observarse como conforme el número de peticiones aumenta el número de aciertos aumenta hasta que se estabiliza en un valor entre el 30\% y el 40\%.
 
+\subsection{Localidad temporal}
 
+Existe gran cantidad de bibliografía \cite{} donde se hace referencia a que algunos objetos en la Web son más populares que otros, es decir, que los patrones de referencia no son uniformes. Teniendo en cuenta esto, hemos llevado a cabo dos análisis para determinar si este comportamiento también se está presente en nuestra carga.
 
+El primer análisis se basa en la concentración de referencias entre los objetos únicos. Los objetos únicos se encuentran ordenados en base al número de veces que son requeridos. Para cada uno de estos objetos determinamos la fracción de todas las peticiones de los clientes. La Figura \ref{} muestra los resultados obtenidos y confirma que los patrones de referencia no son uniformes. Podemos distinguir entre tres agrupaciones observando la figura: i) objetos extremadamente populares donde el 1\% de los objetos únicos suponen un 40\% de las solicitudes de los clientes, ii) objetos moderadamente populares donde el 40\% de los objetos únicos más solicitados reciben el 80\% de peticiones de los clientes y iii) objetos no populares donde el 60\% restante de los objetos únicos son solicitados una sola vez \emph{one-timers}. Este alto porcentage de one-timers también se da en otros estudios de la carga \cite{}.
+Este hecho resulta de gran importancia porque el efecto de cachear los one-timers no produce ningún beneficio en las prestaciones, al contrario, se podrían mejorar las prestaciones si los one-timers fuesen detactados y no almacenados en la cache.
+
+El segundo análisis determina la popularidad de los objetos. Los objetos únicos se encuentran ordenados una vez más en base al número de veces que son requeridos. Cada objeto tiene asignado un rango, donde el rango '1' se corresponde con el objeto único que presenta más referencias y el rango 'N' (asumiendo N objetos únicos) concedido al objeto único con el menor número de peticiones. La Figura \ref{} muestra el número total de accesos a cada uno de estos rangos, donde como se esperaba, el número de accesos decrece con la popularidad de los objetos únicos. Además, la distribución se puede estimar como una Zipf-like donde \emph{alpha} adquiere el valor de 0.79. Estas observaciones también se han obtenido en otros estudios de la carga \cite{}.
 
 \section{Conclusiones}
 \label{conclusiones}

@@ -13,7 +13,7 @@ read_cache <- function() {
 	fn <- paste("data_",scriptname,".gz",sep="")
  	if(file.exists(fn)) {
 		cat("Loading Data from File",fn,"\n")
-		load(fn)
+		load(fn, .GlobalEnv)
 		return(TRUE)
 	} else {
   		return(FALSE)
@@ -29,6 +29,6 @@ write_cache <- function(list) {
 
 ## output device
 if(exists("output_file") == F) {
-  output_file = paste("../charts/",scriptname,"_",db,".eps",sep="")
+  output_file = paste("../figures/",scriptname,"_",db,".eps",sep="")
 }
 postscript(output_file,onefile=TRUE)

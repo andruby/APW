@@ -1,31 +1,34 @@
 #!/usr/bin/Rscript 
-scriptname = "Popularity"
+scriptname = "ObjectPopularity"
 
 ## Include standard stuff
 source("include.r")
 
 ## params
 par(mar=c(4,4,1,2),cex=2)
+sample_size = 10000
+top_percent=0.02
 
 ## Get The Data
-cat("Getting Data \n")
-tod = dbGetQuery(con, paste("SELECT MD5(uri),count(*) AS 'count',sum(size) AS 'size' from ",db," where method = 'GET' group by MD5(uri)"))
-cat("Sampling \n")
-sample_size = 8000
-count_cum = cumsum(rev(sort(tod$count)))
-size_cum = cumsum(rev(sort(tod$size)))
-count_max = max(count_cum)
-size_max= max(size_cum)
-count_sampled <- c(min(count_cum),sort(sample(count_cum, size = sample_size)),max(count_cum))
-size_sampled <- c(min(size_cum),sort(sample(size_cum, size = sample_size)),max(size_cum))
+if(!read_cache()) {
+	cat("Getting Data \n")
+	tod = dbGetQuery(con, paste("SELECT MD5(uri),count(*) AS 'count' from ",db,
+								" where method = 'GET' group by MD5(uri)"))
+	# only take the top {top_percent}%
+	amount = length(tod$count)
+	data <- sort(tod$count, decreasing = T)[1:(amount*top_percent)]
+	cat("Sampling \n")
+	data <- c(max(data),sort(sample(data, size = sample_size), decreasing = T),min(data))
+	write_cache(c("data"))
+}
+
 cat("Plotting Chart \n")
-plot((count_sampled/count_max)*100,xlab="Porcentage de objetos",ylab="Acumulativo", type="n", axes=F)
-axis(1, at=c(0:5)*(sample_size/5), labels=c(0:5)*20)
+plot(data,xlab="Porcentage de objetos (%)",ylab="Peticiones", type="n", axes=F)
+axis(1, at=c(0:5)*(length(data)/5), labels=c(0:5)*(20*top_percent))
 axis(2)
-box()
-lines((count_sampled/count_max)*100,col="red")
-lines((size_sampled/size_max)*100,col="blue", lty=2)
-legend(sample_size/1.8,70,legend=c("Bytes","Peticiones"), col=c("blue","red"), lwd=1:1, lty=2:1, bty="n")
+
+lines(data,col="red")
+polygon(c(0,data),col="red",border="red")
 
 ## close the device
 source("bottom.r")

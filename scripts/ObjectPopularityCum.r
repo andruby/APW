@@ -7,24 +7,31 @@ source("include.r")
 ## params
 par(mar=c(4,4,1,2),cex=2)
 sample_size = 10000
+top_percent=0.50
 
 ## Get The Data
 if(!read_cache()) {
 	cat("Getting Data \n")
-	tod = dbGetQuery(con, paste("SELECT MD5(uri),count(*) AS 'count',sum(size) AS 'size' from ",db," where method = 'GET' group by MD5(uri)"))
+	tod = dbGetQuery(con, paste("SELECT uri_id,count(*) AS 'count',sum(size) AS 'size' from ",db," where method = 'GET' group by uri_id"))
+	
+	cat("Filtering for top ",top_percent,"% \n")
+	amount = length(tod$count)
+	data_count <- sort(tod$count, decreasing = T)[1:(amount*top_percent)]
+	data_size <- sort(tod$size, decreasing = T)[1:(amount*top_percent)]
+	count_max <- max(cumsum(tod$count))
+	size_max <- max(cumsum(tod$size))
+	
 	cat("Sampling \n")
-	count_cum = cumsum(rev(sort(tod$count)))
-	size_cum = cumsum(rev(sort(tod$size)))
-	count_max <- max(count_cum)
-	size_max <- max(size_cum)
+	count_cum = cumsum(data_count)
+	size_cum = cumsum(data_size)
 	count_sampled <- c(min(count_cum),sort(sample(count_cum, size = sample_size)),max(count_cum))
 	size_sampled <- c(min(size_cum),sort(sample(size_cum, size = sample_size)),max(size_cum))
 	write_cache(c("count_sampled","size_sampled","count_max","size_max"))
 }
 
 cat("Plotting Chart \n")
-plot((count_sampled/count_max)*100,xlab="Porcentage de objetos",ylab="Acumulativo", type="n", axes=F)
-axis(1, at=c(0:5)*(sample_size/5), labels=c(0:5)*20)
+plot((count_sampled/count_max)*100,xlab="Porcentage de objetos (%)",ylab="Acumulativo (%)", type="n", axes=F,ylim=c(0,100))
+axis(1, at=c(0:5)*(sample_size/5), labels=c(0:5)*(20*top_percent))
 axis(2)
 
 # add top and bottom dotted lines

@@ -21,7 +21,7 @@ read_cache <- function() {
 }
 
 write_cache <- function(list) {
-	fn <- paste("data_",scriptname,".gz",sep="")
+	fn <- paste("cache/",scriptname,"_data.xz",sep="")
 	cat("Saving Data To File",fn,"\n")
  	save(list=list,file=fn,compress="xz")
 	cat(system(paste("ls -lh",fn),intern=T),"\n")

@@ -24,7 +24,7 @@ write_cache <- function(list) {
 	fn <- paste("data_",scriptname,".gz",sep="")
 	cat("Saving Data To File",fn,"\n")
  	save(list=list,file=fn,compress="gzip")
-	cat(system(paste("ls -lh",fn,"\n"),intern=T))
+	cat(system(paste("ls -lh",fn),intern=T),"\n")
 }
 
 ## output device

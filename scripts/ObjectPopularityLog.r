@@ -14,7 +14,7 @@ top_percent=0.001
 if(!read_cache()) {
 	cat("Getting Data \n")
 	tod = dbGetQuery(con, paste("SELECT uri_id,count(*) AS 'count' from ",db,
-								" where method = 'GET' and uri_id NOT IN (6960,117) group by uri_id"))
+								" where method = 'GET' group by uri_id"))
 	
 	cat("Filtering for top ",top_percent,"% \n")
 	sorted = sort(tod$count, decreasing = T)

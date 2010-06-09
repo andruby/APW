@@ -2,7 +2,7 @@
 ## Parameters
 from_kbytes = 1
 to_kbytes = 5
-scriptname = paste("ElapsedTimeAll_",from_kbytes,"k", sep="")
+scriptname = paste("ElapsedTimeAll_",from_kbytes,"k_to_",to_kbytes,"k",sep="")
 
 ## Include standard stuff
 source("include.r")

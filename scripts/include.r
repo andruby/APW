@@ -10,7 +10,7 @@ if(exists("db")) {
 
 ## cache functions
 read_cache <- function() {
-	fn <- paste("data_",scriptname,".gz",sep="")
+	fn <- paste("data_",scriptname,".xz",sep="")
  	if(file.exists(fn)) {
 		cat("Loading Data from File",fn,"\n")
 		load(fn, .GlobalEnv)
@@ -23,7 +23,7 @@ read_cache <- function() {
 write_cache <- function(list) {
 	fn <- paste("data_",scriptname,".gz",sep="")
 	cat("Saving Data To File",fn,"\n")
- 	save(list=list,file=fn,compress="gzip")
+ 	save(list=list,file=fn,compress="xz")
 	cat(system(paste("ls -lh",fn),intern=T),"\n")
 }
 

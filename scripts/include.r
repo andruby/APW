@@ -36,5 +36,5 @@ if(exists("export_png") && export_png) {
 	png(output_file,1024,768)
 } else {
 	output_file = paste(output_file,"pdf",sep="")
-	pdf(output_file,8,6)
+	pdf(output_file,11.6929,8.2677)
 }

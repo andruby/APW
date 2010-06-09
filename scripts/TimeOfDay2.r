@@ -16,7 +16,7 @@ tod_x = tod$minutes/3
 tod_counts = (tod$count/sum(tod$count))*100
 tod_bytes = (tod$size/sum(tod$size))*100
 cat("Plotting Chart \n")
-plot(tod_x,tod_counts,xlab="Hora del Dia",ylab="Percentage", type="n", axes=F)
+plot(tod_x,tod_counts,xlab="Hora del Dia",ylab="Percentaje", type="n", axes=F)
 axis(1, at=c(0:12)*2, labels=c(0:12)*2)
 axis(2)
 # axis(2, at=c(0,400000,800000,1200000), labels=c(0,0.4,0.8,1.2))

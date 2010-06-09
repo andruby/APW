@@ -30,7 +30,7 @@ if(!read_cache()) {
 }
 
 cat("Plotting Chart \n")
-plot((count_sampled/count_max)*100,xlab="Porcentage de objetos (%)",ylab="Acumulativo (%)", type="n", axes=F,ylim=c(0,100))
+plot((count_sampled/count_max)*100,xlab="Porcentaje de objetos (%)",ylab="Acumulativo (%)", type="n", axes=F,ylim=c(0,100))
 axis(1, at=c(0:5)*(sample_size/5), labels=c(0:5)*(20*top_percent))
 axis(2)
 

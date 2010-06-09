@@ -10,7 +10,7 @@ if(exists("db")) {
 
 ## cache functions
 read_cache <- function() {
-	fn <- paste("data_",scriptname,".xz",sep="")
+	fn <- paste("cache/",scriptname,"_data.xz",sep="")
  	if(file.exists(fn)) {
 		cat("Loading Data from File",fn,"\n")
 		load(fn, .GlobalEnv)

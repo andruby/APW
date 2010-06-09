@@ -10,7 +10,7 @@ if(!read_cache()) {
 	cat("Getting Data (Requests) \n")
 	data_all = dbGetQuery(con, paste("select size AS 'size' from ",db," where size > 1 and ",between_time))
 	cat("Getting Data (Uniques) \n")
-	data = dbGetQuery(con, paste("select avg(size) AS 'size' from ",db," where size > 1 and ",between_time," group by MD5(uri)"))
+	data = dbGetQuery(con, paste("select avg(size) AS 'size' from ",db," where size > 1 and ",between_time," group by uri_id"))
 
 	## save data to file
 	d1 <- density(log10(data_all$size))

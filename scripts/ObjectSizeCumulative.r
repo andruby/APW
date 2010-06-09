@@ -10,7 +10,7 @@ if(!read_cache()) {
 	cat("Getting Data (Requests) \n")
 	os_reqs = dbGetQuery(con, paste("select size from ",db," where size > 1 and ",between_time))
 	cat("Getting Data (Uniques) \n")
-	os_uniq = dbGetQuery(con, paste("select distinct MD5(uri),size from ",db," where size > 1 and ",between_time))
+	os_uniq = dbGetQuery(con, paste("select distinct uri_id,size from ",db," where size > 1 and ",between_time))
 
 	cat("Calculating cumulative functions \n")
 	sort_reqs <- c(min(os_reqs$size),sort(sample(os_reqs$size, size = 8000)),max(os_reqs$size))

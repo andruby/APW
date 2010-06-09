@@ -29,6 +29,12 @@ write_cache <- function(list) {
 
 ## output device
 if(exists("output_file") == F) {
-  output_file = paste("../figures/",scriptname,"_",db,".eps",sep="")
+  output_file = paste("../figures/",scriptname,"_",db,".",sep="")
 }
-postscript(output_file,onefile=TRUE)
+if(exists("export_png") && export_png) {
+	output_file = paste(output_file,"png",sep="")
+	png(output_file,1024,768)
+} else {
+	output_file = paste(output_file,"pdf",sep="")
+	pdf(output_file,8,6)
+}

@@ -20,12 +20,12 @@ if(!read_cache()) {
 	data <- sort(tod$count, decreasing = T)[1:(amount*top_percent)]
 	
 	cat("Sampling \n")
-	data <- c(max(data),sort(sample(data, size = sample_size), decreasing = T),min(data))
+	#data <- c(max(data),sort(sample(data, size = sample_size), decreasing = T),min(data))
 	write_cache(c("data"))
 }
 
 cat("Plotting Chart \n")
-plot(data,xlab="Porcentage de objetos (%)",ylab="Peticiones", type="n", axes=F)
+plot(data,xlab="Porcentaje de objetos (%)",ylab="Peticiones", type="n", axes=F)
 axis(1, at=c(0:5)*(length(data)/5), labels=c(0:5)*(20*top_percent))
 axis(2)
 

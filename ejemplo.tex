@@ -1,7 +1,8 @@
 \documentclass[twocolumn]{Jornadas}
 \usepackage[utf8]{inputenc}
-\usepackage[dvips]{graphics}
-\usepackage{epsfig}
+%\usepackage[dvips]{graphics}
+\usepackage[pdftex]{graphicx}
+%\usepackage{epsfig}
 \usepackage[spanish]{babel}
 \usepackage{subfig}
 
@@ -150,13 +151,13 @@ En la \ref{fig:elapsed} se pueden observar el tiempo transcurrido para resolver 
 A su vez, en la gráfica \ref{fig:ahorrado} se muestra el ancho de banda consumido por el total de las peticiones realizadas al proxy y el ancho de banda no consumido gracias a los aciertos de caché, en las dos semanas de las que se disponen datos. Como se observa, el máximo ancho de banda ahorrado está alrededor de 6 Mbps, que es aproximadamente un 15\% del ancho de banda en los momentos de máxima demanda. También se puede observar como el ancho de banda ahorrado es prácticamente nulo en los momentos de más baja demanda, veremos esto con más detenimiento en la sección \ref{cargaDia}.
 
 \begin{figure}[ht!]
-\includegraphics[scale=0.30,angle=-90]{figures/Bandwidth_full.eps}\label{fig:ahorrado}
+\includegraphics[scale=0.30]{figures/Bandwidth_full.pdf}\label{fig:ahorrado}
 \caption{Ancho de banda total y ahorrado}
 \label{fig:ahorrado}
 \end{figure}
 
 \begin{figure}[ht!]
-\includegraphics[scale=0.30,angle=-90]{figures/ElapsedTimeAll_1k_full.eps} \label{fig:elapsed}
+\includegraphics[scale=0.30]{figures/ElapsedTimeAll_1k_full.pdf} \label{fig:elapsed}
 \caption{Tiempo necesario para resolver una petición dependiendo del tipo de acierto/fallo de caché}
 \label{fig:elapsed}
 \end{figure}
@@ -216,8 +217,8 @@ La Tabla \ref{table:contenido} muestra los diferentes tipos de objetos solicitad
 
 \begin{figure*}[ht!]
 \centering
-\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeCumulative_full.eps}\label{Acumulativo}}
-\subfloat[]{ \includegraphics[scale=0.30,angle=-90]{figures/ObjectSizeDensity_full.eps} \label{Densidad}}
+\subfloat[]{ \includegraphics[scale=0.30]{figures/ObjectSizeCumulative_full.pdf}\label{Acumulativo}}
+\subfloat[]{ \includegraphics[scale=0.30]{figures/ObjectSizeDensity_full.pdf} \label{Densidad}}
 \caption{Análisis de la distribución del tamaño de los objetos únicos y solicitados}
 \label{fig:tamObjetos}
 \end{figure*}
@@ -242,7 +243,7 @@ En la Figura \ref{Densidad} podemos observar la distribución del tamaño de los
 
 \begin{figure}[]
 \begin{center}
-  \includegraphics[scale=0.30,angle=-90]{figures/TimeOfDay3_full.eps}
+  \includegraphics[scale=0.30]{figures/TimeOfDay3_full.pdf}
 \end{center}
 \caption{Time Of Day} \label{Timeday}
 \end{figure}
@@ -261,6 +262,31 @@ El primer análisis se basa en la concentración de referencias entre los objeto
 Este hecho resulta de gran importancia porque el efecto de cachear los one-timers no produce ningún beneficio en las prestaciones, al contrario, se podrían mejorar las prestaciones si los one-timers fuesen detactados y no almacenados en la cache.
 
 El segundo análisis determina la popularidad de los objetos. Los objetos únicos se encuentran ordenados una vez más en base al número de veces que son requeridos. Cada objeto tiene asignado un rango, donde el rango '1' se corresponde con el objeto único que presenta más referencias y el rango 'N' (asumiendo N objetos únicos) concedido al objeto único con el menor número de peticiones. La Figura \ref{} muestra el número total de accesos a cada uno de estos rangos, donde como se esperaba, el número de accesos decrece con la popularidad de los objetos únicos. Además, la distribución se puede estimar como una Zipf-like donde \emph{alpha} adquiere el valor de 0.79. Estas observaciones también se han obtenido en otros estudios de la carga \cite{}.
+
+\subsection{Tiempo de sesión de los usuarios}
+Debido a la dificultad de establecer cuando un usuario ha finalizado su sesión de navegación por la web, hemos utilizado el método expuesto en el artículo \cite{}.
+
+Este método consiste en intentar estimar cual es el tiempo de inactividad, a partir del cual, un usuario se considera que ha dejado de navegar por la web. Para ello, hemos considerado cada IP como un usuario diferente y hemos variado el tiempo de inactividad entre 1 y 1000 segundos, contando en cada caso el número de nuevas sesiones. Hemos considerado que una sesión es nueva cuando el tiempo entre dos peticiones consecutivas es mayor que el tiempo de inactividad fijado.
+
+Mediante este método hemos obtenido los resultados de la gráfica \ref{fig:numberSessions} viendo esta gráfica hemos llegado a pensar que el tiempo de inactividad ronda los 100 segundos, ya que es donde la curva deja de ser muy pronunciada.
+
+\begin{figure}[]
+\begin{center}
+  \includegraphics[scale=0.30,angle=-90]{figures/inactivityPeriod_full.pdf}
+\end{center}
+\caption{Número de sesiones vs. Periodos de inactividad} \label{fig:numberSessions}
+\end{figure}
+
+\begin{figure}[]
+\begin{center}
+  \includegraphics[scale=0.30,angle=-90]{figures/diffInactivitiPeriod_full.pdf}
+\end{center}
+\caption{Diferencia de sesiones} \label{fig:diffSessions}
+\end{figure}
+
+Además, hemos intentado estudiar alrededor de que valores de tiempo hay más variabilidad de sesiones, esto nos permite saber con más precisión cual es el tiempo de inactividad. Para ello, hemos obtenido la diferencia entre valores consecutivos de periodos de inactividad. Por ejemplo, hemos obtenido la diferencia entre las sesiones estimadas con un periodo de inactividad de 1 segundo y las sesiones estimadas con un periodo de inactividad de 2 segundos y así sucesivamente, obteniendo la gráfica de la figura \ref{fig:diffSessions}.
+
+En esta gráfica, hemos limitado los valores de diferencia entre número de sesiones a 25000 para poder apreciar con más claridad los picos. Como se puede observar, al rededor de los 100-120 segundos existe una gran diferencia entre el número de sesiones. Pero se pueden apreciar más diferencias a los 300, 600 y 900 segundos.
 
 \section{Conclusiones}
 \label{conclusiones}

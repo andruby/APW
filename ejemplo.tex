@@ -151,7 +151,7 @@ En la \ref{fig:elapsed} se pueden observar el tiempo transcurrido para resolver 
 A su vez, en la gráfica \ref{fig:ahorrado} se muestra el ancho de banda consumido por el total de las peticiones realizadas al proxy y el ancho de banda no consumido gracias a los aciertos de caché, en las dos semanas de las que se disponen datos. Como se observa, el máximo ancho de banda ahorrado está alrededor de 6 Mbps, que es aproximadamente un 15\% del ancho de banda en los momentos de máxima demanda. También se puede observar como el ancho de banda ahorrado es prácticamente nulo en los momentos de más baja demanda, veremos esto con más detenimiento en la sección \ref{cargaDia}.
 
 \begin{figure}[ht!]
-\includegraphics[scale=0.30]{figures/Bandwidth_full.pdf}\label{fig:ahorrado}
+\includegraphics[scale=0.29]{figures/Bandwidth_full.pdf}\label{fig:ahorrado}
 \caption{Ancho de banda total y ahorrado}
 \label{fig:ahorrado}
 \end{figure}
@@ -189,12 +189,12 @@ Datos (\%)        & 95.37   & 0.34 & 0.15 & 5.12             \\\hline
 \scriptsize
 %\tiny \footnotesize
 \begin{tabular}{|l||c|c|c|} \hline
-Contenido   & Peticiones & Peticiones (\%) &Tamaño Total (GB) \\\hline\hline
+Contenido   & Peticiones & Peticiones (\%) &Tam. Total (GB) \\\hline\hline
 Imágenes    & 80339008   & 51.40 &483             \\\hline  
 HTML        & 39663602   & 25.59 &200             \\\hline 
 Javascript  & 16893965   & 10.90 &106             \\\hline 
 Flash       & 14947413   & 9.65 & 100              \\\hline 
-Documentos  & 2727847    & 1.76 &49              \\\hline
+Doc.       & 2727847    & 1.76 &49              \\\hline
 Vídeo       & 180369     & 0.12 & 559             \\\hline 
 Audio       & 128793     & 0.08 & 115             \\\hline 
 Otros       & 85729      & 0.06 & 661             \\\hline\hline
@@ -217,8 +217,8 @@ La Tabla \ref{table:contenido} muestra los diferentes tipos de objetos solicitad
 
 \begin{figure*}[ht!]
 \centering
-\subfloat[]{ \includegraphics[scale=0.30]{figures/ObjectSizeCumulative_full.pdf}\label{Acumulativo}}
-\subfloat[]{ \includegraphics[scale=0.30]{figures/ObjectSizeDensity_full.pdf} \label{Densidad}}
+\subfloat[]{\includegraphics[scale=0.30]{figures/ObjectSizeCumulative_full.pdf}\label{Acumulativo}}
+\subfloat[]{\includegraphics[scale=0.30]{figures/ObjectSizeDensity_full.pdf} \label{Densidad}}
 \caption{Análisis de la distribución del tamaño de los objetos únicos y solicitados}
 \label{fig:tamObjetos}
 \end{figure*}
@@ -288,7 +288,7 @@ Para intentar corroborar esto, hemos estudiado alrededor de que valores de tiemp
 
 En esta gráfica, hemos limitado los valores de diferencia entre número de sesiones a 25000 para poder apreciar con más claridad los picos. Como se puede observar, al rededor de los 100-120 segundos existe una gran diferencia entre el número de sesiones. Pero se pueden apreciar más diferencias a los 300, 600 y 900 segundos.
 
-Esto nos hace pensar que, al contrario de lo que se afirma en el artículo \cite{}, el usuario de la red de la universidad no tiene un tiempo de inactividad concreto a partir del cual podamos estimar la duración de las sesiones. Esta divergencia en los resultados puede ser debida simplemente a la diferencia entre los distintos tipos de usuarios que estudian en ambos casos. Ya que, en el artículo \cite{} se analiza el uso de la web hecho por usuarios de dispositivos móviles. En cambio, en la universidad la mayoría de los equipos son ordenadores, tanto de sobremesa como portátiles.
+Esto nos hace pensar que, al contrario de lo que se afirma en el artículo \cite{}, el usuario de la red de la universidad no tiene un tiempo de inactividad concreto a partir del cual podamos estimar la duración de las sesiones. Esta divergencia en los resultados puede ser debida simplemente a la diferencia entre los distintos tipos de usuarios que estudian en ambos casos; ya que, en el artículo \cite{} se analiza el uso de la web hecho por usuarios de dispositivos móviles. En cambio, en la universidad la mayoría de los equipos son ordenadores, tanto de sobremesa como portátiles.
 
 \section{Conclusiones}
 \label{conclusiones}

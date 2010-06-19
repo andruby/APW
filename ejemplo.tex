@@ -30,12 +30,12 @@
 % Oculta las cabeceras y los números de página.
 % Ambos elementos se añadirán durante la edición de las actas completas.
 \markboth{}{}
-\pagestyle{empty}
+%\pagestyle{empty}
 \thispagestyle{empty} % Oculta el número de la primera página
 
 \begin{abstract}
 
-La técnica de caching consiste en almacenar objetos en caches cercanas a los clientes que los solicitan. Los aciertos en la cache eliminan la necesidad de acceder al servidor, reduciendo notablemente la demanda de ancho de banda, la latencia y el tráfico de la red a la vez que se mejora la disponibilidad del servidor. La técnica de caching se puede evaluar mediante la caracterización de la carga, ya que esta técnica explota propiedades específicas de los accesos para mejorar las prestaciones. Mediante la caracterización de un sistema en el tiempo se pueden observar los cambios que el sistema ha sufrido. Además, la caracterización de la carga resulta muy útil para el diseño de nuevos componentes en base a los resultados obtenidos.
+La técnica de caching consiste en almacenar objetos en caches cercanas a los clientes que los solicitan. Los aciertos en la cache eliminan la necesidad de acceder al servidor, reduciendo notablemente la demanda de ancho de banda, la latencia y el tráfico de la red a la vez que se mejora la disponibilidad del servidor. Esta técnica se puede evaluar mediante la caracterización de la carga, ya que explota propiedades específicas de los accesos para mejorar las prestaciones. Mediante la caracterización de un sistema en el tiempo se pueden observar los cambios que el sistema ha sufrido.
 
 Este artículo presenta un estudio detallado de la caracterización de la carga de trabajo de un servidor proxy. En concreto, se analizan características como la eficiencia del servidor proxy, los códigos de respuesta del proxy, los tipos de objetos, el tamaño de los objetos únicos y solicitados, la evolución de la carga del proxy durante el día, la localidad temporal y el tiempo de sesión de los usuarios.
 
@@ -48,16 +48,13 @@ Este artículo presenta un estudio detallado de la caracterización de la carga 
 \section{Introducción}
 \label{intro}
 
-\PARstart{L}{os} objetivos del trabajo y la problemática asociada, el planteamiento
-del estudio y el procedimiento seguido, resultados y conclusiones.
+\PARstart{L}{a} popularidad del \emph{World Wide Web}, específicamente el alto porcentaje del tráfico HTTP, es una de las principales razones por las que el tráfico en Internet se ha incrementado con los años. Para entender este incremento del tráfico, podemos destacar las cifras de principios de los años 90. Los estudios mostraban que el 44\% del tráfico en Internet era originado por peticiones FTP, mientras que durante los primeros años del nuevo milenio, entre un 75 y un 80\% del tráfico en Internet está formado por la actividad HTTP \cite{barish}. Este incremento del tráfico en Internet lleva asociada la demanda de escalabilidad en su infraestructura. El crecimiento exponencial de la Web desprovisto de soluciones escalables resulta en una carga en la red prohibitiva y unos tiempos de respuesta inaceptables. Además, el uso de la Web forma parte de la vida rutinaria y los negocios de las personas, con lo que las mejoras de las prestaciones en la Web es un hecho deseable, pero sobre todo necesario.
 
-\subsection{Técnica de caching}
+El presente estudio comprueba que la gran mayoría (tanto en número de peticiones como en bytes transmitidos) de los objetos HTTP demandados por los usuarios son imágenes y código HTML. Con vistas al futuro, el hecho de incluir la etiqueta de vídeo en el nuevo estándar HTML5 y la posibilidad de realizar HTTP Streaming, nos hace pensar que los vídeos podrán llegar a ser una parte importante del tráfico HTTP.
 
-La popularidad del \emph{World Wide Web}, específicamente el alto porcentaje del tráfico HTTP, es la primera razón por la que el tráfico en Internet se ha incrementado con los años. Para entender este incremento del tráfico, podemos destacar las cifras de que a principios de los años 90, los estudios mostraban que el 44\% del tráfico en Internet era originado por peticiones FTP, mientras que durante los primeros años del nuevo milenio, entre un 75 y un 80\% del tráfico en Internet está formado por la actividad HTTP \cite{barish}. Este incremento del tráfico en Internet lleva asociada la demanda de escalabilidad en su infraestructura. El crecimiento exponencial de la Web desprovisto de soluciones escalables resulta en una carga en la red prohibitiva y unos tiempos de respuesta inaceptables. Además, el uso de la Web forma parte de la vida rutinaria y los negocios de las personas, con lo que las mejoras de las prestaciones en la Web es un hecho deseable, pero sobre todo necesario.
+Existen diversas técnicas para mejorar las prestaciones de la Web. Las páginas Web pueden hacer uso de clusters para manejar las peticiones de los clientes. Por otra parte, se pueden mejorar los enlaces de la red para conseguir mayor ancho de banda y así manejar el volumen creciente de los datos que se transfieren. Sin embargo, estas técnicas representan soluciones a corto plazo. El crecimiento de Internet en términos del número total de bytes transmitidos entre las máquinas y el inesperado uso masivo del protocolo HTTP, hacen de la técnica de Web caching la solución más atractiva y la que más atención ha recibido. Se trata de una de las técnicas más importantes de reducción de tráfico en la red.
 
-El presente estudio comprueba que la gran mayoría (tanto en número de peticiones como en bytes transmitidos) de los objetos HTTP demandados por los usuarios son imágenes y código HTML. Con vistas al futuro, el hecho de incluir la etiqueta de vídeo en el nuevo estándar HTML5 y la posibilidad de realizar HTTP Streaming, nos hace pensar que los vídeos podrán llegar a ser una parte importante del tráfico en la Web.
-
-Existen diversas técnicas para mejorar las prestaciones de la Web. Las páginas Web pueden hacer uso de clusters para manejar las peticiones de los clientes. Por otra parte, se pueden mejorar los enlaces de la red para conseguir mayor ancho de banda y así manejar el volumen creciente de los datos que se transfieren. Sin embargo, estas técnicas representan soluciones a corto plazo. El crecimiento de Internet en términos del número total de bytes transmitidos entre las máquinas y el inesperado uso masivo del protocolo HTTP, hacen de la técnica de Web caching la solución más atractiva y la que más atención ha recibido. Se trata de una de las técnicas más importantes de reducción de tráfico en la red. La técnica de Web caching consiste en almacenar documentos en caches cercanas a los clientes que solicitan los documentos. Los aciertos en la cache eliminan la necesidad de contactar con el servidor, con lo cual representa una forma efectiva de reducción de la demanda de ancho de banda, mejora de la disponibilidad del servidor Web (evita que se convierta en un \emph{hotspot}) y reducción de la latencia de la red.
+Esta técnica consiste en almacenar documentos en caches cercanas a los clientes que los solicitan. Los aciertos en la cache eliminan la necesidad de contactar con el servidor, con lo cual representa una forma efectiva de reducción de la demanda de ancho de banda, mejora de la disponibilidad del servidor Web (evita que se convierta en un \emph{hotspot}) y reducción de la latencia de la red.
 
 La técnica de caching puede mejorar la percepción que tienen los usuarios en cuanto a las prestaciones de la red. Cuando sirven a los clientes localmente, las caches ocultan la latencia resultante de las redes de gran tamaño. Cuando se produce un fallo local de cache, el proveedor original sirve las peticiones de los clientes.
 Este hecho cobra gran importancia con los objetos de naturaleza temporal (datos multimedia como audio o vídeo) donde mantener una tasa de transferencia constante y el tiempo de respuesta son particularmente importantes.
@@ -65,12 +62,11 @@ Este hecho cobra gran importancia con los objetos de naturaleza temporal (datos 
 \subsection{Caracterización de la carga}
 Los beneficios de la técnica de caching han sido demostrados mediante algunos prototipos de investigación y la experimentación con grandes niveles de caching en la Web \cite{squid}. 
 
-La caracterización de la carga es importante porque la técnica de caching explota propiedades específicas de los accesos para mejorar las prestaciones como la localidad temporal y la compartición. Además, es una componente crucial del diseño de sistemas debido a que permite entender el estado actual del sistema. Mediante la caracterización de un sistema en el tiempo se pueden observar los cambios que el sistema ha sufrido. La caracterización de la carga también es necesaria para el diseño de nuevos componentes.
+La caracterización de la carga es importante porque la técnica de caching explota propiedades específicas de los accesos para mejorar las prestaciones como la localidad temporal. Además, es una componente crucial del diseño de sistemas debido a que permite entender el estado actual del sistema y observar posibles cambios.
 
-En la bibliografía existen multitud de artículos referentes a la caracterización de la carga. Podemos referenciar algunos artículos que presentan cierta similitud con nuestro análisis de la carga como la caracterización de la carga de Arlitt et al. \cite{arlitt} CANVIAR REFERENCIA ARLITT y Mahanti et al. \cite{mahanti}.
+En la bibliografía existen multitud de artículos referentes a la caracterización de la carga. Podemos referenciar algunos artículos que presentan cierta similitud con nuestro análisis de la carga como la caracterización de la carga de Arlitt et al. \cite{arlitt2} y Mahanti et al. \cite{mahanti}.
 
-El resto del artículo se organiza de la siguiente manera: la
-Sección \ref{meto} muestra como se distribuyen los datos contenidos en logs de acceso y como se lleva a cabo la reducción de datos. La Sección \ref{resultados} presenta el estudio de la caracterización de la carga. Finalmente, la Sección \ref{conclusiones} ofrece las conclusiones más relevantes.
+El resto del artículo se organiza de la siguiente manera: la Sección \ref{meto} muestra como se distribuyen los datos contenidos en logs de acceso y como se lleva a cabo la reducción de datos. La Sección \ref{resultados} presenta el estudio de la caracterización de la carga. Finalmente, la Sección \ref{conclusiones} ofrece las conclusiones más relevantes.
 
 \section{Metodología}
 \label{meto}
@@ -85,7 +81,7 @@ Cada entrada de un log de acceso contiene información de una sola petición de 
 \item[Timestamp] El momento en el que una petición ha sido completada.
 \item[Elapsed] Considera el número de milisegundos en los que la transacción ha ocupado la cache.
 \item[Remotehost] La dirección IP del cliente.
-\item[Code/status] Consta de dos entradas separadas mediante una barra. Almacena el resultado de la transacción. Consultar la lista de códigos para obtener los posibles valores.
+\item[Code/status] Consta de dos entradas separadas mediante una barra. Almacena el resultado de la transacción. Consultar la lista de códigos, que detallaremos a continuación, para obtener los posibles valores.
 El estado es un número asociado al código.
 \item[Bytes] El tamaño de los datos enviados al cliente.
 \item[Method] El método de petición para obtener un objeto.
@@ -112,11 +108,19 @@ La siguiente lista muestra los posibles códigos asociados a cada entrada de un 
 \item[TCP\_DENIED] Acceso denegado para la petición.
 \end{description}
 
-\subsection{Reducción de datos}
+\subsection{Reducción de datos y procedimiento}
 \label{red_datos}
 
-Resulta de gran interés localizar los datos no sujetos de ser caracterizados que aparecen en los logs de acceso porque de lo contrario, provocarían efectos anómalos en la caracterización de la carga.
-La Tabla \ref{table:url} muestra las URLs que han sido filtradas, así como el número de peticiones a la URL y el tamaño total de las mismas.
+Para poder procesar eficientemente la información, los logs de acceso los hemos insertado en una base de datos MySQL.
+
+Esta inserción de datos en la base de datos se ha realizado teniendo en cuenta pequeñas optimizaciones para facilitar el procesamiento de los datos y son: i) eliminar la columna \textit{rfc931} ya que esta funcionalidad no se utiliza en el proxy y siempre presenta el mismo valor, así como la columna \textit{hierarchy code} porque sólo hay un proxy en nuestro escenario, ii) utilizar  enumeraciones en las columnas action, method y content type y iii) almacenar la dirección IP como un entero utilizando la función INET\_ATON() de MySQL.
+
+Además de estas optimizaciones, también hemos eliminado de los logs los objetos que hemos visto que no son cacheables. Para ello, hemos realizado una búsqueda de diferentes subcadenas en las URL y hemos comprobado si se producían aciertos de cache para esos objetos. Solo hemos eliminado aquellas URLs que coincidían con la subcadena '.cgi?' ya que ninguna de estas url producía aciertos en la cache y, por tanto, hemos supuesto que eran objetos no cacheables.
+
+Por otra parte, en los análisis de datos previos que realizamos, encontramos que había ciertos datos anómalos en los logs, provocando comportamientos puntuales y extraños en la caracterización de la carga. Estos datos anómalos podrían resultar inapreciables si el periodo de recogida de datos hubiese sido más largo, pero al contar con solo 15 días de logs afectaban de manera apreciable a los resultados y decidimos descartarlos para realizar el análisis.
+
+Las URLs que han sido filtradas, así como el número de peticiones y el tamaño total se muestran en la Tabla \ref{table:url}. El objeto \textit{favicon.ico} fue descargado por un una IP concreta durante una noche dos millones y media de veces y afectaba sobretodo al análisis de la evolución de la carga del servidor durante el día, con lo que decidimos descartarlo. Por otra parte, también descartamos las entradas con peticones al fichero \textit{video.mjpg} ya que se realizaban a un servidor con IP local. Las últimas dos filas de la tabla hacen referencia a los objetos \textit{.cgi?} que descartamos por ser no cacheables.
+
 Con el filtrado de estas URLs el volumen total de los logs de acceso se reduce en un 3.5\%.
 
 \begin{table*}[ht!]
@@ -136,31 +140,29 @@ Otros .cgi?                                   & 208960     & 1.4                
 \label{table:url}
 \end{table*}
 
-Asimismo, resulta de gran interés eliminar la información no relevante para obtener un volumen de datos menor que el original con el objetivo de procesar los logs de manera más rápida. Las optimizaciones que hemos tenido en cuenta para que el volumen de los logs de acceso se reduzca son: i) eliminar la fila \emph{rfc931} porque siempre presenta el mismo valor '-', así como la fila \emph{hierarchy code} porque sólo hay un proxy en nuestro escenario, ii) reemplazar las filas que contienen VARCHAR por ENUMs que contienen todos los valores posibles (action, method y content para MIME) y iii) almacenar la dirección IP como un entero utilizando la función INET\_ATON() de MySQL.
-
-En cuanto al procedimiento seguido para obtener las estadísticas de los logs de acceso, el software Calamardo bla bla bla...
-
 
 \section{Caracterización de la Carga}
 \label{resultados}
 
 En esta sección presentamos los resultados de nuestro trabajo de caracterización de la carga. La sección se divide en varios apartados según el análisis trate la eficiencia del servidor, los códigos de estado, los tipos de objetos, el tamaño de los objetos únicos y solicitados, la evolución de la carga del servidor durante el día, la localidad temporal o el tiempo de sesión de los usuarios.
 
-\subsection{Eficiencia del servidor proxy}
+\subsection{Eficiencia del servidor proxy}\label{eficiencia}
 A partir de los logs del proxy podemos extraer información sobre el ancho de banda ahorrado por la universidad al encontrarse los objetos demandados por los usuarios en la cache del proxy. Además, también podemos observar la ganancia en el tiempo de respuesta cuando el objeto está en la cache.
 
 En la Figura \ref{fig:elapsed} se puede observar el tiempo transcurrido en ms para resolver la petición dependiendo del tipo de acierto o fallo de cache. Se aprecia una gran diferencia entre el tiempo necesario para resolver una petición de un objeto que ya está en cache y el tiempo necesario para resolver una petición de un objeto que no está en cache. Por otra parte, así como la diferencia de tiempo transcurrido entre diferentes tipos de fallo de cache es bastante apreciable, la diferencia de tiempo transcurrido para los diferentes tipos de aciertos no es tan significativa.
 
+Esta diferencia no es tan significativa entre los diferentes tipos de acierto porque la diferencia de tiempo de recuperar un objeto de memoria o de disco es muy pequeña comparada con la diferencia entre un acierto y un fallo. Por otra parte, la diferencia de tiempo entre un acierto IMS y uno normal también es muy pequeña ya que la mayor parte del tiempo corresponde al acceso al objeto, no a la transferencia de este por la red (en un acierto IMS no se transfiere una copia del objeto al cliente).
+
 A su vez, en la Figura \ref{fig:ahorrado} se muestra el ancho de banda consumido por el total de las peticiones realizadas al proxy y el ancho de banda no consumido gracias a los aciertos de cache durante el transcurso de los días tomados para obtener los logs. Como se observa, el máximo ancho de banda ahorrado está alrededor de 6 Mbps, que es aproximadamente un 15\% del ancho de banda en los momentos de máxima demanda. También se puede observar como el ancho de banda ahorrado es prácticamente nulo en los momentos de más baja demanda. Veremos esto con más detenimiento en la Sección \ref{cargaDia}.
 
 \begin{figure}[ht!]
-\includegraphics[scale=0.29]{figures/Bandwidth_full.pdf}\label{fig:ahorrado}
+\includegraphics[scale=0.29]{figures/Bandwidth_full.pdf}
 \caption{Ancho de banda total y ahorrado}
 \label{fig:ahorrado}
 \end{figure}
 
 \begin{figure}[ht!]
-\includegraphics[scale=0.30]{figures/ElapsedTimeAll_1k_full.pdf} \label{fig:elapsed}
+\includegraphics[scale=0.30]{figures/ElapsedTimeAll_1k_full.pdf} 
 \caption{Tiempo necesario para resolver una petición dependiendo del tipo de acierto/fallo de cache}
 \label{fig:elapsed}
 \end{figure}
@@ -209,7 +211,7 @@ Total & 154966726 & 100 & 2273 \\\hline
 
 En este apartado hemos analizado los tipos de objetos que han demandado los clientes.
 Estos objetos se pueden clasificar en las siguientes categorías según su contenido: imágenes, HTML, javascript, flash, documentos, vídeo, audio y otros.
-Esta clasificación se lleva a cabo mediante la etiqueta \emph{Content Type}. En concreto, los objetos incluidos en las categorías de imágenes, audio y vídeo se corresponden con los \emph{Content Type} que empiezan por \textit{image/}, \textit{audio/} y \textit{video/} respectivamente.
+Esta clasificación ha se llevado a cabo mediante la etiqueta \emph{Content Type}. En concreto, los objetos incluidos en las categorías de imágenes, audio y vídeo se corresponden con los \emph{Content Type} que empiezan por \textit{image/}, \textit{audio/} y \textit{video/} respectivamente.
 Por su parte, la categoría HTML está formada por objetos cuyo \emph{Content Type} incluye las cadenas \textit{html}, \textit{css} o \textit{text/xml}.
 La categoría javascript contiene objetos cuyo \emph{Content Type} es \textit{javascript}. La categoría flash cuenta con objetos con un \emph{Content Type} como \textit{flash}, \textit{flv} o \textit{shockwave}. En la categoría documentos se incluyen los objetos que se corresponden con un \emph{Content Type} como \textit{pdf}, \textit{doc}, \textit{xls}, \textit{word}, \textit{excel} o \textit{powerpoint}. Por último, los objetos clasificados en la categoría de otros cuentan con un \emph{Content Type} diferente a los anteriores.
 
@@ -232,42 +234,58 @@ Los objetos solicitados conforman todas las peticiones a objetos que realiza el 
 
 La Figura \ref{Acumulativo} muestra la distribución acumulativa del tamaño de los objetos solicitados al servidor proxy.
 Téngase en cuenta que el eje X es logarítmico, con lo que pequeños incrementos en la pendiente suponen un crecimento significativo.
-Estudios previos \cite{arlitt2, crovella} muestran que el tamaño de los objetos se expande varios órdenes de magnitud, desde decenas de B hasta decenas de MB.
+Estudios previos \cite{arlitt2}\cite{crovella} muestran que el tamaño de los objetos se expande varios órdenes de magnitud, desde decenas de B hasta decenas de MB.
 Estos estudios sugieren que la distribución del tamaño de los objetos sea \emph{heavy-tailed} o de \emph{colas-pesadas}. Una distribución de colas-pesadas tiene la propiedad de que la cola de la distribución (valores a la derecha en la Figura \ref{Acumulativo}) se incrementa lentamente. Esto significa que si tomamos tamaños aleatorios de los objetos, la probabilidad de obtener valores extremadamente grandes no es negligible.
 
 %La distribución es \emph{heavy-tailed} o de colas-pesadas. Una distribución se define como de colas-pesadas si, a pesar de la distribución de los valores pequeños de la variable aleatoria, la forma asintótica de la distribución es hiperbólica. %\textcolor{red}{paper de Mahanti, pag 15}
 
-El tamaño de la mayoría de los objetos se encuentra entre 100B y 100KB.
+En nuestro caso, el tamaño de la mayoría de los objetos se encuentra entre 100B y 100KB y podemos observar que la distribución es de colas pesadas.
 Por otra parte, la curva de los objetos solicitados se encuentra por encima de la de los objetos únicos. Esto se debe a que los objetos más populares son los de tamaño pequeño y por tanto se generan más peticiones de estos objetos al servidor proxy.
 
-En la Figura \ref{Densidad} podemos observar la distribución del tamaño de los objetos, tanto únicos como solicitados, en una escala logarítmica. Se puede observar como ninguna de las dos curvas sigue una distribución predefinida.
+En la Figura \ref{Densidad} podemos observar la distribución de la densidad del tamaño de los objetos, tanto únicos como solicitados, en una escala logarítmica. Se puede observar como ninguna de las dos curvas sigue una distribución predefinida.
 
 \subsection{Evolución de la carga del servidor durante el día}\label{cargaDia}
 
-\begin{figure}[]
+\begin{figure}[tbp]
 \begin{center}
   \includegraphics[scale=0.30]{figures/TimeOfDay3_full.pdf}
 \end{center}
-\caption{Time Of Day} \label{Timeday}
+\caption{Evolución de la carga del servidor durante el dia} \label{Timeday}
 \end{figure}
 
 La Figura \ref{Timeday} muestra el análisis de las solicitudes y aciertos según el momento del día. La gráfica se debe interpretar con cautela, ya que la escala para la curva de solicitados llega hasta el 10\% mientras que la curva de aciertos es sobre el 100\%. 
 
-En la curva de solicitados podemos observar que la carga resulta baja durante la noche porque los usuarios o trabajadores de la UPV se encuentran usualmente durmiendo en sus casas. La carga aumenta durante las horas de la jornada laboral llegando a su punto máximo a las 12 horas del mediodía. Se puede incluso observar un ligero descenso en las horas de comida (13-15h) y un ligero aumento por la tarde, pero no mayor que durante las horas laborales matinales.
+Como se esperaba, en la curva de solicitados podemos observar como la carga resulta baja durante la noche, aumentando durante las horas de la jornada laboral y llegando a su punto máximo a las 12 horas del mediodía. Se puede incluso observar un ligero descenso en las horas de comida (13-15h) y un ligero aumento por la tarde, pero no mayor que durante las horas laborales matinales.
 
 Por otra parte, la curva de aciertos nos muestra como varía la tasa de aciertos con las horas del día. Puede observarse como conforme el número de peticiones aumenta el número de aciertos aumenta hasta que se estabiliza en un valor entre el 30\% y el 40\%.
 
 \subsection{Localidad temporal}
 
-Existe gran cantidad de bibliografía \cite{} donde se hace referencia a que algunos objetos en la Web son más populares que otros, es decir, que los patrones de referencia no son uniformes. Teniendo en cuenta esto, hemos llevado a cabo dos análisis para determinar si este comportamiento también está presente en nuestra carga.
 
-El primer análisis se basa en la concentración de referencias entre los objetos únicos. Los objetos únicos se encuentran ordenados en base al número de veces que son requeridos. Para cada uno de estos objetos hemos determinamo la fracción de todas las peticiones de los clientes. La Figura \ref{} muestra los resultados obtenidos y confirma que los patrones de referencia no son uniformes. Podemos distinguir entre tres agrupaciones observando la figura: i) objetos extremadamente populares donde el 1\% de los objetos únicos suponen un 40\% de las solicitudes de los clientes, ii) objetos moderadamente populares donde el 40\% de los objetos únicos más solicitados reciben el 80\% de peticiones de los clientes y iii) objetos no populares donde el 60\% restante de los objetos únicos son solicitados una sola vez (\emph{one-timers}). Este alto porcentage de one-timers también se da en otros estudios de la carga \cite{}.
-Este hecho resulta de gran importancia porque el efecto de cachear los one-timers no produce ningún beneficio en las prestaciones, al contrario, se podrían mejorar las prestaciones si los one-timers fuesen detactados y no almacenados en la cache.
 
-El segundo análisis determina la popularidad de los objetos. Los objetos únicos se encuentran ordenados una vez más en base al número de veces que son requeridos. Cada objeto tiene asignado un rango, donde el rango '1' se corresponde con el objeto único que presenta más referencias y el rango 'N' (asumiendo N objetos únicos) concedido al objeto único con el menor número de peticiones. La Figura \ref{} muestra el número total de accesos a cada uno de estos rangos, donde como se esperaba, el número de accesos decrece con la popularidad de los objetos únicos. Además, la distribución se puede estimar como una Zipf-like donde \emph{alpha} adquiere el valor de 0.79. Estas observaciones también se han obtenido en otros estudios de la carga \cite{}.
+Existe gran cantidad de bibliografía \cite{mahanti},\cite{Breslau},\cite{arlitt2} donde se hace referencia a que algunos objetos en la Web son más populares que otros, es decir, que los patrones de referencia no son uniformes. Teniendo en cuenta esto, hemos llevado a cabo dos análisis para determinar si este comportamiento también está presente en nuestra carga.
+
+El primer análisis se basa en la concentración de referencias entre los objetos únicos y los bytes solicitados. Los objetos únicos se encuentran ordenados en base al número de veces que son requeridos. Para cada uno de estos objetos hemos determinado la fracción de todas las peticiones de los clientes. La Figura \ref{fig:ObjectPopu} muestra los resultados obtenidos y confirma que los patrones de referencia no son uniformes. Podemos distinguir entre tres agrupaciones observando la figura: i) objetos extremadamente populares donde el 1\% de los objetos únicos suponen un 60\% de las solicitudes de los clientes, ii) objetos moderadamente populares donde el 30\% de los objetos únicos más solicitados reciben casi el 90\% de las peticiones de los clientes y iii) objetos poco populares que comprenden el 10\% restante. En el caso de los bytes solicitados esta no uniformidad en los patrones de referencia es todavía mayor ya que el 1\% de los bytes supone el 80\% de las peticiones.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[scale=0.30]{figures/ObjectPopularityCum_full.pdf}
+\caption{Frecuencia de referencia}
+\label{fig:ObjectPopu}
+\end{figure}
+\begin{figure}[t]
+\centering
+\includegraphics[scale=0.30]{figures/zipf.pdf} 
+\caption{Frecuencia de referencia. Analisis zipf}
+\label{fig:zipf}
+\end{figure}
+
+El que una porción tan pequeña de los objetos acumule la mayor parte de las referencias confirma que la técnica de caching es beneficiosa en la red de la universidad. Tal y como habíamos visto en la sección \ref{eficiencia} en los momentos de máxima demanda permite ahorrar un 15\% del tráfico saliente a Internet.
+
+El segundo análisis determina la popularidad de los objetos. Los objetos únicos se encuentran ordenados una vez más en base al número de veces que son requeridos. Cada objeto tiene asignado un rango, donde el rango '1' se corresponde con el objeto único que presenta más referencias y el rango 'N' (asumiendo N objetos únicos) concedido al objeto único con el menor número de peticiones. La Figura \ref{fig:zipf} muestra el número total de accesos a cada uno de estos rangos, donde como se esperaba, el número de accesos decrece con la popularidad de los objetos únicos. Además, la distribución se puede estimar como una Zipf-like donde \emph{alpha} adquiere el valor de 1.
 
 \subsection{Tiempo de sesión de los usuarios}
-Debido a la dificultad de establecer cuando un usuario ha finalizado su sesión de navegación por la Web, hemos utilizado el método expuesto en el artículo \cite{}.
+Debido a la dificultad de establecer cuando un usuario ha finalizado su sesión de navegación por la Web, hemos utilizado el método expuesto en el artículo \cite{adya2001analyzing}.
 
 Este método consiste en intentar estimar cual es el tiempo de inactividad, a partir del cual, un usuario se considera que ha dejado de navegar por la Web. Para ello, hemos considerado cada IP como un usuario diferente y hemos variado el tiempo de inactividad entre 1 y 1000 segundos, contando en cada caso el número de nuevas sesiones. Hemos considerado que una sesión es nueva cuando el tiempo entre dos peticiones consecutivas es mayor que el tiempo de inactividad fijado.
 
@@ -291,28 +309,28 @@ Para intentar corroborar esto, hemos estudiado alrededor de qué valores de tiem
 
 En este gráfico hemos limitado los valores de diferencia entre número de sesiones a 25000 para poder apreciar con más claridad los picos. Como se puede observar, alrededor de los 100-120 segundos existe una gran diferencia entre el número de sesiones. Pero se pueden apreciar más diferencias, aunque no tan pronunciadas, a los 300, 600 y 900 segundos.
 
-A la vista de los resultados y al contrario de lo que se afirma en el artículo \cite{}, el usuario de la red no tiene un tiempo de inactividad concreto a partir del cual podamos estimar la duración de las sesiones. Esta divergencia en los resultados puede ser debida simplemente a la diferencia entre los distintos tipos de usuarios que se estudian en ambos casos; ya que, en el artículo \cite{} se analiza el uso de la Web hecho por usuarios de dispositivos móviles. En cambio, en la universidad la mayoría de los equipos son ordenadores, tanto de sobremesa como portátiles.
+A la vista de los resultados y al contrario de lo que se afirma en el artículo \cite{adya2001analyzing}, el usuario de la red no tiene un tiempo de inactividad concreto a partir del cual podamos estimar la duración de las sesiones. Esta divergencia en los resultados puede ser debida simplemente a la diferencia entre los distintos tipos de usuarios que se estudian en ambos casos; ya que, en el artículo \cite{adya2001analyzing} se analiza el uso de la Web hecho por usuarios de dispositivos móviles. En cambio, en la universidad la mayoría de los equipos son ordenadores, tanto de sobremesa como portátiles.
 
 \section{Conclusiones}
 \label{conclusiones}
 
 La técnica de caching es una de las más importantes en cuanto a la reducción de tráfico en la red. Consiste en almacenar objetos en caches cercanas a los clientes que los solicitan. Los aciertos en la cache eliminan la necesidad de acceder al servidor, reduciendo notablemente la demanda de ancho de banda y la latencia de la red a la vez que se mejora la disponibilidad del servidor. La técnica de caching se puede evaluar mediante la caracterización de la carga, ya que esta técnica explota propiedades específicas de los accesos para mejorar las prestaciones.
-Mediante la caracterización de un sistema en el tiempo se pueden observar los cambios que el sistema ha sufrido. Además, la caracterización de la carga resulta muy útil para el diseño de nuevos componentes en base a los resultados obtenidos. La carga objeto de análisis se ha obtenido de la Universidad Politénica de Valencia durante 15 días.
+Mediante la caracterización de un sistema en el tiempo se pueden observar los cambios que el sistema ha sufrido. La carga objeto de análisis se ha obtenido de la Universidad Politécnica de Valencia durante 15 días.
 
 La caracterización de la carga que se ha llevado a cabo en este trabajo ha estudiado en primer lugar la eficiencia del servidor proxy.
 Los resultados han mostrado una gran diferencia entre los tiempos necesarios para resolver una petición a un objeto cacheado y no cacheado. Además, el máximo ancho de banda ahorrado se encuentra alrededor de 6Mbps, que resulta en un 15\% del ancho de banda en los momentos de máxima demanda. 
 
 En segundo lugar se han analizado los códigos de respuesta del servidor, donde un 68\% de las peticiones resultan satisfactorias, mientras que un 19\% corresponde a peticiones a objetos no modificados. La mayoría del tráfico corresponde a peticiones satisfactorias, ya que las peticiones a objetos no modificados sólo transfieren las cabeceras HTTP.
 
-En cuanto a los tipos de objetos que demandan los clientes, las imágenes han supuesto un 50\% del total de peticiones, mientras que los objetos HTML han obtenido un 26\%. Estos dos tipos de objetos representan un 21 y 9\% del total de GB de las peticiones respectivamente. El efecto se debe a que los vídeos y audios ocupan mayor tamaño que las imágenes y los HTML.
+En cuanto a los tipos de objetos que demandan los clientes, las imágenes han supuesto un 50\% del total de peticiones, mientras que los objetos HTML han obtenido un 26\%. Estos dos tipos de objetos representan un 21 y 9\% del total de GB de las peticiones respectivamente. Como se ha explicado anteriormente, el efecto se debe a que los vídeos y audios ocupan mayor tamaño que las imágenes y los HTML.
 
-el tamaño de los objetos únicos y solicitados, FALTA
+Por otra parte, el análisis del tamaño de los objetos únicos y solicitados  ha revelado que la mayoría de los objetos solicitados está entre 100B y 100KB y además se distribuyen conforme a una distribución de colas pesadas.
 
 Los resultados de la evolución de la carga del servidor durante el día han mostrado el comportamiento de los usuarios de la universidad, donde la carga aunmenta durante las horas de trabajo. La tasa de aciertos se ha estabilizado entre un 30-40\% en los momentos de mayor carga.
 
-El estudio de la localidad temporal ha confirmado que los patrones de referencia no son uniformes. Hemos distinguimos entre objetos extremadamente populares (1\% de objetos únicos suponen un 40\% de solicitudes), moderadamente populares (40\% de objetos únicos reciben un 80\% de solicitudes) y no populares (60\% de objetos únicos sólo se solicitan una vez). Por otra parte, hemos observado que el número de accesos a los objetos únicos decrece con la popularidad de los mismos y la distribución se puede aproximar a una Zipf-like donde \emph{alpha} adquiere el valor de 0.79.
+El estudio de la localidad temporal ha confirmado que los patrones de referencia no son uniformes. Hemos distinguimos entre objetos extremadamente populares (1\% de objetos únicos suponen un 60\% de solicitudes), moderadamente populares (30\% de objetos únicos reciben un 90\% de solicitudes) y poco populares (10\% de objetos únicos). Por otra parte, hemos observado que el número de accesos a los objetos únicos decrece con la popularidad de los mismos y la distribución se puede aproximar a una Zipf-like donde \emph{alpha} adquiere el valor de 1.
 
-Por último, en cuanto al tiempo de sesión de los usuarios, se ha estimado el tiempo de inactividad en unos 100 segundos, aunque los resultados obtenidos son variables, y puede ser por el hecho de que el usuario de la universidad no tiene un tiempo de sesión estable.
+Por último, en cuanto al tiempo de sesión de los usuarios, se ha estimado el tiempo de inactividad en unos 100 segundos, aunque los resultados obtenidos son variables debido al hecho de que el usuario de la universidad no tiene un tiempo de sesión concreto.
 
 \nocite{*}
 \bibliographystyle{Jornadas}
@@ -359,6 +377,13 @@ M. Crovella and A. Bestavros,
 \newblock {Self-Similarity in World Wide Web Traffic: Evidence and Possible Causes},
 \newblock {\em  IEEE/ACM Transactions on Networking},
 \newblock {vol. 5, no. 6, pp. 835-846, 1997}
+
+\bibitem{adya2001analyzing}
+Adya, A. and Bahl, P. and Qiu, L.,
+  \newblock{Analyzing the browse patterns of mobile clients},
+  \newblock{\em Proceedings of the 1st ACM SIGCOMM Workshop on Internet Measurement},
+  \newblock{pp. 194, 2001}
+
 
 \end{thebibliography}
 
